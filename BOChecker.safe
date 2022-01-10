@@ -1,0 +1,54 @@
+Attribute VB_Name = "Module1"
+Sub BO_Checker()
+    
+    Dim rngCell As Range
+    
+    Dim lRow As Long
+    
+    Dim sCounter As Integer: sCounter = 0
+    
+    If StrComp(Range("A1"), "") = 0 Then
+        Exit Sub
+    End If
+
+    lRow = Cells.Find(What:="*", _
+            After:=Range("A1"), _
+            LookAt:=xlPart, _
+            SearchOrder:=xlByRows, _
+            SearchDirection:=xlPrevious, _
+            MatchCase:=False).Row
+
+    Set objRegex = CreateObject("vbscript.regexp")
+    With objRegex
+        .Global = True
+        .Pattern = "[^a-zA-Z0-9\ \/\-\?\:\(\)\@\%\&\#\.\,\_\'\+\{\}]+"
+        
+        For Each rngCell In Range("A1:R" & lRow)
+            If .test(rngCell.Value) Then
+                sCounter = sCounter + 1
+                Set RegMC = .Execute(rngCell.Value)
+                For Each RegM In RegMC
+                    rngCell.Characters(RegM.FirstIndex + 1, RegM.Length).Font.Color = vbRed
+                Next
+            End If
+
+            If sCounter > 0 Then
+                rngCell.Interior.ColorIndex = 6
+                sCounter = 0
+            Else
+                rngCell.Interior.ColorIndex = 0
+            End If
+        Next
+        
+    End With
+    
+    For Each rngCell In Range("A1:R" & lRow)
+        If VarType(rngCell) <> 8 Then
+            rngCell.Interior.ColorIndex = 26
+        ElseIf VarType(rngCell) = 8 And rngCell.Interior.ColorIndex <> 6 Then
+            rngCell.Interior.ColorIndex = 0
+        End If
+    Next
+    
+
+End Sub
