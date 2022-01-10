@@ -1,19 +1,35 @@
 Attribute VB_Name = "Module1"
 Global work_Book
 Global work_Sheet
+Option Compare Text
 Sub Main()
     Dim Client_ID
+    Dim Load_Type
     Client_ID = InputBox("Enter CID")
+    Load_Type = InputBox("Enter Pre-Load Type")
 
     Application.ScreenUpdating = False
     Call Add_Calculation_Sheet
-    Call CID_Length
-    Call Check_CID
-    Call Account_Number
-    Call Account_Name
-    Call Interal_Account_Number
-    Call Check_PEID
-    Call Account_Flags
+    
+    Select Case Load_Type
+    Case "global_add"
+        CID_Length
+        Check_CID
+        Account_Number
+        Account_Name
+        Interal_Account_Number 4
+        Check_PEID 5
+        Account_Flags
+    Case "dom_add"
+        CID_Length
+        Check_CID
+        Account_Number
+        Account_Name
+        Interal_Account_Number 5
+        Check_PEID 4
+        Account_Flags
+    End Select
+    
     'Call Account_Length
     
     Worksheets("Sheet1").Rows("1:1").Copy
@@ -60,10 +76,12 @@ Private Sub Check_CID() 'Checking for CID
     Dim work_Sheet As Worksheet
     Dim calculate_Sheet As Worksheet
     Dim final_Sheet As Worksheet
-    Set work_Book = ActiveWorkbook
+    Set work_Book = ThisWorkbook
     Set work_Sheet = work_Book.Worksheets("Sheet1")
     Set calculate_Sheet = work_Book.Worksheets("Calculate_Sheet")
     Set final_Sheet = work_Book.Worksheets("Final_Sheet")
+    'MsgBox (rng.Value)
+
     Final_Row_Client_ID = work_Sheet.Cells(Rows.Count, "A").End(xlUp).Row
     
     For Counter = 2 To Final_Row_Client_ID
@@ -121,7 +139,7 @@ Private Sub CID_Length()
     Dim Final_Row_CID_Length As Long
     Dim work_Book As Workbook
     Dim work_Sheet As Worksheet
-    Set work_Book = ActiveWorkbook
+    Set work_Book = ThisWorkbook
     Set work_Sheet = work_Book.Worksheets("Sheet1")
     'Dim Account_Num_Length As String
     'Dim CID As String
@@ -156,7 +174,7 @@ Private Sub Account_Number()
     Dim work_Sheet As Worksheet
     Dim calculate_Sheet As Worksheet
     Dim final_Sheet As Worksheet
-    Set work_Book = ActiveWorkbook
+    Set work_Book = ThisWorkbook
     Set work_Sheet = work_Book.Worksheets("Sheet1")
     Set calculate_Sheet = work_Book.Worksheets("Calculate_Sheet")
     Set final_Sheet = work_Book.Worksheets("Final_Sheet")
@@ -234,7 +252,7 @@ Private Sub Account_Name()
     Dim work_Sheet As Worksheet
     Dim calculate_Sheet As Worksheet
     Dim final_Sheet As Worksheet
-    Set work_Book = ActiveWorkbook
+    Set work_Book = ThisWorkbook
     Set work_Sheet = work_Book.Worksheets("Sheet1")
     Set calculate_Sheet = work_Book.Worksheets("Calculate_Sheet")
     Set final_Sheet = work_Book.Worksheets("Final_Sheet")
@@ -299,20 +317,20 @@ Private Sub Account_Name()
     Next Counter
     'Call Account_Length
 End Sub
-Private Sub Interal_Account_Number()
+Private Sub Interal_Account_Number(column_Num As Long)
     Dim Final_Row_Internal_Account_Number
     Dim work_Book As Workbook
     Dim work_Sheet As Worksheet
     Dim calculate_Sheet As Worksheet
     Dim final_Sheet As Worksheet
-    Set work_Book = ActiveWorkbook
+    Set work_Book = ThisWorkbook
     Set work_Sheet = work_Book.Worksheets("Sheet1")
     Set calculate_Sheet = work_Book.Worksheets("Calculate_Sheet")
     Set final_Sheet = work_Book.Worksheets("Final_Sheet")
-    Final_Row_Internal_Account_Number = work_Sheet.Cells(Rows.Count, "D").End(xlUp).Row
+    Final_Row_Internal_Account_Number = work_Sheet.Cells(Rows.Count, column_Num).End(xlUp).Row
     
     For Counter = 2 To Final_Row_Internal_Account_Number
-        calculate_Sheet.Cells(Counter, 1).Value = work_Sheet.Cells(Counter, "D").Value
+        calculate_Sheet.Cells(Counter, 1).Value = work_Sheet.Cells(Counter, column_Num).Value
         calculate_Sheet.Cells(Counter, 2).Value = Worksheets("Calculate_Sheet").Cells(Counter, 1).Value
 
 '        Worksheets("Calculate_Sheet").Cells(Counter, 2).Replace What:="`", Replacement:="", LookAt:=xlPart, SearchOrder:= _
@@ -360,8 +378,8 @@ Private Sub Interal_Account_Number()
         End With
         'Final Sheet
         calculate_Sheet.Cells(Counter, 4).Copy
-        final_Sheet.Cells(Counter, "D").PasteSpecial xlPasteValues
-        final_Sheet.Cells(Counter, "D").PasteSpecial xlFormats
+        final_Sheet.Cells(Counter, column_Num).PasteSpecial xlPasteValues
+        final_Sheet.Cells(Counter, column_Num).PasteSpecial xlFormats
         'Filter Incorrect Accounts
 '        If Incorrect_Account_Length Then
 '            MsgBox ("Cells with Incorrect Account Length have been hightlighted and sorted for you")
@@ -372,26 +390,26 @@ Private Sub Interal_Account_Number()
     Next Counter
     'Call Account_Length
 End Sub
-Private Sub Check_PEID()
+Private Sub Check_PEID(column_Num As Long)
     Dim Final_Row_PEID
     Dim work_Book As Workbook
     Dim work_Sheet As Worksheet
     Dim calculate_Sheet As Worksheet
     Dim final_Sheet As Worksheet
-    Set work_Book = ActiveWorkbook
+    Set work_Book = ThisWorkbook
     Set work_Sheet = work_Book.Worksheets("Sheet1")
     Set calculate_Sheet = work_Book.Worksheets("Calculate_Sheet")
     Set final_Sheet = work_Book.Worksheets("Final_Sheet")
     Dim Incorrect_Account_Length As Boolean
-    Final_Row_PEID = work_Sheet.Cells(Rows.Count, "E").End(xlUp).Row
+    Final_Row_PEID = work_Sheet.Cells(Rows.Count, column_Num).End(xlUp).Row
     
     For Counter = 2 To Final_Row_PEID
-        calculate_Sheet.Cells(Counter, 1).Value = work_Sheet.Cells(Counter, "E").Value
+        calculate_Sheet.Cells(Counter, 1).Value = work_Sheet.Cells(Counter, column_Num).Value
         calculate_Sheet.Cells(Counter, 2).Value = Worksheets("Calculate_Sheet").Cells(Counter, 1).Value
 
-        If Len(work_Sheet.Cells(Counter, "E").Value) <> 3 Then
+        If Len(work_Sheet.Cells(Counter, column_Num).Value) <> 3 Then
             Incorrect_Account_Length = True
-            work_Sheet.Cells(Counter, "E").Interior.ColorIndex = 35
+            work_Sheet.Cells(Counter, column_Num).Interior.ColorIndex = 35
         End If
 '        Worksheets("Calculate_Sheet").Cells(Counter, 2).Replace What:="`", Replacement:="", LookAt:=xlPart, SearchOrder:= _
 '            xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
@@ -438,8 +456,8 @@ Private Sub Check_PEID()
         End With
         'Final Sheet
         calculate_Sheet.Cells(Counter, 4).Copy
-        final_Sheet.Cells(Counter, "E").PasteSpecial xlPasteValues
-        final_Sheet.Cells(Counter, "E").PasteSpecial xlFormats
+        final_Sheet.Cells(Counter, column_Num).PasteSpecial xlPasteValues
+        final_Sheet.Cells(Counter, column_Num).PasteSpecial xlFormats
         'Filter Incorrect Accounts
         If Incorrect_Account_Length Then
             MsgBox ("Cells with Incorrect PEID have been hightlighted and sorted for you")
@@ -455,12 +473,14 @@ Private Sub Account_Flags()
     Dim work_Book As Workbook
     Dim work_Sheet As Worksheet
     Dim final_Sheet As Worksheet
-    Set work_Book = ActiveWorkbook
+    Set work_Book = ThisWorkbook
     Set work_Sheet = work_Book.Worksheets("Sheet1")
     Set final_Sheet = work_Book.Worksheets("Final_Sheet")
     Final_Row_Account_Flags = work_Sheet.Cells(Rows.Count, 1).End(xlUp).Row
     
+    final_Sheet.Select
     final_Sheet.Range(Cells(Final_Row_Account_Flags, "P"), Cells(2, "P")).Value = "Y"
     final_Sheet.Range(Cells(Final_Row_Account_Flags, "Q"), Cells(2, "Q")).Value = "S"
     final_Sheet.Range(Cells(Final_Row_Account_Flags, "S"), Cells(2, "S")).Value = "B"
+    work_Sheet.Select
 End Sub
