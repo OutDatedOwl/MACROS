@@ -1,9 +1,12 @@
 Attribute VB_Name = "Module2"
     Global work_Sheet As Worksheet
     Global work_Book As ThisWorkbook
+    Global incorrect_Account_Length As Boolean
     Option Compare Text
 Sub Main() 'Main BO_Adder
 Attribute Main.VB_ProcData.VB_Invoke_Func = " \n14"
+    incorrect_Acount_Length = False
+
     Application.DisplayAlerts = False
     Application.ScreenUpdating = False
     
@@ -11,13 +14,18 @@ Attribute Main.VB_ProcData.VB_Invoke_Func = " \n14"
     Create_Calculation_Sheet
     Check_CID
     Account_Number
+    
+    If incorrect_Account_Length Then
+        Exit Sub
+    End If
+    
     Market_ID
     Entity_Type_Code
     BO_Name
     URN_Type
     URN_Number
     Address_Type
-    Address_1
+    Address
     'Address_2
     'Address_3
     'Address_4
@@ -31,11 +39,21 @@ Attribute Main.VB_ProcData.VB_Invoke_Func = " \n14"
     Country_Code
     
     Worksheets("Sheet1").Rows("1:1").Copy
+    Worksheets("Final_Sheet").Rows("1:1").PasteSpecial xlPasteColumnWidths
     Worksheets("Final_Sheet").Rows("1:1").PasteSpecial xlPasteValues
     Worksheets("Final_Sheet").Rows("1:1").PasteSpecial xlFormats
+    Worksheets("Final_Sheet").Select
     Application.ScreenUpdating = True
 End Sub
 Private Sub check_Columns_For_Text() 'Check if columns are empty
+    Dim work_Book As ThisWorkbook
+    Dim work_Sheet As Worksheet
+    Dim calculate_Sheet As Worksheet
+    Dim final_Sheet As Worksheet
+    Set work_Book = ThisWorkbook
+    Set work_Sheet = work_Book.Worksheets("Sheet1")
+    Set calculate_Sheet = work_Book.Worksheets("Calculate_Sheet")
+    Set final_Sheet = work_Book.Worksheets("Final_Sheet")
     Dim dRng As Range, lRow As Long
     Dim kRng As Range
     Dim Col As Long
@@ -49,7 +67,7 @@ Private Sub check_Columns_For_Text() 'Check if columns are empty
     On Error GoTo 0
     For Counter = 1 To Col
         For Counter_B = 3 To lRow
-            If Worksheets("Sheet1").Cells(Counter_B, Counter).Value <> "" Then
+            If work_Sheet.Cells(Counter_B, Counter).Value <> "" Then
                 empty_Column = False
                 'work_Sheet.Cells(Counter_B, Counter).Interior.ColorIndex = 5
                 'MsgBox ("Row " & Counter_B & " Column " & Counter)
@@ -59,7 +77,7 @@ Private Sub check_Columns_For_Text() 'Check if columns are empty
         'MsgBox "Column " & Counter & " Empty: " & IsEmpty(Range("D3:D"))
         If empty_Column = True Then
             'MsgBox ("Column " & Counter & " is Empty")
-            'MsgBox (Counter)
+            ''MsgBox (Counter_B)
         End If
         empty_Column = True
     Next Counter
@@ -75,7 +93,8 @@ Private Sub check_Columns_For_Text() 'Check if columns are empty
 End Sub
 Private Sub Account_Number()
     Dim Final_Row_Client_ID
-    Dim work_Book As ThisWorkbook
+    Dim range_Client_ID
+    Dim work_Book As Workbook
     Dim work_Sheet As Worksheet
     Dim calculate_Sheet As Worksheet
     Dim final_Sheet As Worksheet
@@ -85,9 +104,14 @@ Private Sub Account_Number()
     Set final_Sheet = work_Book.Worksheets("Final_Sheet")
     Final_Row_Client_ID = work_Sheet.Cells(Rows.Count, "B").End(xlUp).Row
     
+    'final_Sheet.Range(Cells(3, 2), Cells(Final_Row_Client_ID, 2)).Value =
+    
     For Counter = 3 To Final_Row_Client_ID
-        calculate_Sheet.Cells(Counter, 1).Value = work_Sheet.Cells(Counter, "B").Value
-        calculate_Sheet.Cells(Counter, 2).Value = calculate_Sheet.Cells(Counter, 1).Value
+        work_Sheet.Cells(Counter, "B").Copy
+        calculate_Sheet.Cells(Counter, 1).PasteSpecial xlPasteValues
+        
+        calculate_Sheet.Cells(Counter, 1).Copy
+        calculate_Sheet.Cells(Counter, 2).PasteSpecial xlPasteValues
         
         calculate_Sheet.Cells(Counter, 2).Replace What:="`", Replacement:="", LookAt:=xlPart, SearchOrder:= _
             xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
@@ -119,9 +143,9 @@ Private Sub Account_Number()
         calculate_Sheet.Cells(Counter, 3).Value = "=IF(OR(RIGHT(TRIM(RC[-1]),1)="")"",RIGHT(TRIM(RC[-1]),1)=""."",RIGHT(TRIM(RC[-1]),1)="",""),LEFT(TRIM(RC[-1]),LEN(TRIM(RC[-1]))-1),TRIM(RC[-1]))"
                 
         calculate_Sheet.Cells(Counter, 3).Copy
-        calculate_Sheet.Cells(Counter, 4).PasteSpecial xlPasteValues
+        final_Sheet.Cells(Counter - 1, "B").PasteSpecial xlPasteValues
             
-        With calculate_Sheet.Cells(Counter, 4)
+        With final_Sheet.Cells(Counter - 1, "B")
             .HorizontalAlignment = xlLeft
             .VerticalAlignment = xlBottom
             .WrapText = False
@@ -133,9 +157,9 @@ Private Sub Account_Number()
             .MergeCells = False
         End With
         'Final Sheet
-        calculate_Sheet.Cells(Counter, 4).Copy
-        Worksheets("Final_Sheet").Cells(Counter - 1, "B").PasteSpecial xlPasteValues
-        Worksheets("Final_Sheet").Cells(Counter - 1, "B").PasteSpecial xlFormats
+        'calculate_Sheet.Cells(Counter, 4).Copy
+        'final_Sheet.Cells(Counter - 1, "B").PasteSpecial xlPasteValues
+        'final_Sheet.Cells(Counter - 1, "B").PasteSpecial xlFormats
     Next Counter
     Account_Length
 End Sub
@@ -165,7 +189,7 @@ Private Sub Entity_Type_Code()
     Set work_Sheet = work_Book.Worksheets("Sheet1")
     Set calculate_Sheet = work_Book.Worksheets("Calculate_Sheet")
     Set final_Sheet = work_Book.Worksheets("Final_Sheet")
-    Final_Row_Entity_Code_ID = Cells(Rows.Count, 1).End(xlUp).Row
+    Final_Row_Entity_Code_ID = work_Sheet.Cells(Rows.Count, 1).End(xlUp).Row
     
     For Counter = 3 To Final_Row_Entity_Code_ID
         calculate_Sheet.Cells(Counter, 1).Value = work_Sheet.Cells(Counter, "E").Value
@@ -201,9 +225,9 @@ Private Sub Entity_Type_Code()
         calculate_Sheet.Cells(Counter, 3).Value = "=IF(OR(RIGHT(TRIM(RC[-1]),1)="")"",RIGHT(TRIM(RC[-1]),1)=""."",RIGHT(TRIM(RC[-1]),1)="",""),LEFT(TRIM(RC[-1]),LEN(TRIM(RC[-1]))-1),TRIM(RC[-1]))"
                 
         calculate_Sheet.Cells(Counter, 3).Copy
-        calculate_Sheet.Cells(Counter, 4).PasteSpecial xlPasteValues
+        final_Sheet.Cells(Counter - 1, "E").PasteSpecial xlPasteValues
             
-        With Sheets("Calculate_Sheet").Cells(Counter, 4)
+        With final_Sheet.Cells(Counter - 1, "E")
             .HorizontalAlignment = xlLeft
             .VerticalAlignment = xlBottom
             .WrapText = False
@@ -215,7 +239,7 @@ Private Sub Entity_Type_Code()
             .MergeCells = False
         End With
         'Final Sheet
-        Worksheets("Final_Sheet").Cells(Counter - 1, "E").Value = calculate_Sheet.Cells(Counter, 4).Value
+        'Worksheets("Final_Sheet").Cells(Counter - 1, "E").Value = calculate_Sheet.Cells(Counter, 4).Value
     Next Counter
 End Sub
 Private Sub Check_CID() 'Checking for CID
@@ -228,6 +252,7 @@ Private Sub Check_CID() 'Checking for CID
     Set work_Sheet = work_Book.Worksheets("Sheet1")
     Set calculate_Sheet = work_Book.Worksheets("Calculate_Sheet")
     Set final_Sheet = work_Book.Worksheets("Final_Sheet")
+    Final_Row_Client_ID = work_Sheet.Cells(Rows.Count, 1).End(xlUp).Row
     
     For Counter = 3 To Final_Row_Client_ID
         calculate_Sheet.Cells(Counter, 1).Value = work_Sheet.Cells(Counter, "A").Value
@@ -263,9 +288,9 @@ Private Sub Check_CID() 'Checking for CID
         calculate_Sheet.Cells(Counter, 3).Value = "=IF(OR(RIGHT(TRIM(RC[-1]),1)="")"",RIGHT(TRIM(RC[-1]),1)=""."",RIGHT(TRIM(RC[-1]),1)="",""),LEFT(TRIM(RC[-1]),LEN(TRIM(RC[-1]))-1),TRIM(RC[-1]))"
                 
         calculate_Sheet.Cells(Counter, 3).Copy
-        calculate_Sheet.Cells(Counter, 4).PasteSpecial xlPasteValues
+        final_Sheet.Cells(Counter - 1, "A").PasteSpecial xlPasteValues
             
-        With Sheets("Calculate_Sheet").Cells(Counter, 4)
+        With final_Sheet.Cells(Counter - 1, "A")
             .HorizontalAlignment = xlLeft
             .VerticalAlignment = xlBottom
             .WrapText = False
@@ -277,7 +302,7 @@ Private Sub Check_CID() 'Checking for CID
             .MergeCells = False
         End With
         'Final Sheet
-        final_Sheet.Cells(Counter - 1, "A").Value = calculate_Sheet.Cells(Counter, 4).Value
+        'final_Sheet.Cells(Counter - 1, "A").Value = calculate_Sheet.Cells(Counter, 4).Value
     Next Counter
 End Sub
 Private Sub BO_Name() 'Check for BO Name
@@ -290,7 +315,7 @@ Private Sub BO_Name() 'Check for BO Name
     Set work_Sheet = work_Book.Worksheets("Sheet1")
     Set calculate_Sheet = work_Book.Worksheets("Calculate_Sheet")
     Set final_Sheet = work_Book.Worksheets("Final_Sheet")
-    Final_Row = Cells(Rows.Count, "H").End(xlUp).Row
+    Final_Row = work_Sheet.Cells(Rows.Count, "H").End(xlUp).Row
     
     For Counter = 3 To Final_Row
         
@@ -327,9 +352,9 @@ Private Sub BO_Name() 'Check for BO Name
         calculate_Sheet.Cells(Counter, 3).Value = "=IF(OR(RIGHT(TRIM(RC[-1]),1)="")"",RIGHT(TRIM(RC[-1]),1)=""."",RIGHT(TRIM(RC[-1]),1)="",""),LEFT(TRIM(RC[-1]),LEN(TRIM(RC[-1]))-1),TRIM(RC[-1]))"
                 
         calculate_Sheet.Cells(Counter, 3).Copy
-        calculate_Sheet.Cells(Counter, 4).PasteSpecial xlPasteValues
+        final_Sheet.Cells(Counter - 1, "H").PasteSpecial xlPasteValues
             
-        With calculate_Sheet.Cells(Counter, 4)
+        With final_Sheet.Cells(Counter - 1, "H")
             .HorizontalAlignment = xlLeft
             .VerticalAlignment = xlBottom
             .WrapText = False
@@ -340,7 +365,7 @@ Private Sub BO_Name() 'Check for BO Name
             .ReadingOrder = xlContext
             .MergeCells = False
         End With
-        Worksheets("Final_Sheet").Cells(Counter - 1, "H").Value = calculate_Sheet.Cells(Counter, 4).Value
+        'final_Sheet.Cells(Counter - 1, "H").Value = calculate_Sheet.Cells(Counter, 4).Value
     Next Counter
 End Sub
 Private Sub URN_Type()
@@ -353,7 +378,7 @@ Private Sub URN_Type()
     Set work_Sheet = work_Book.Worksheets("Sheet1")
     Set calculate_Sheet = work_Book.Worksheets("Calculate_Sheet")
     Set final_Sheet = work_Book.Worksheets("Final_Sheet")
-    Final_Row_URN_Type = Cells(Rows.Count, "J").End(xlUp).Row
+    Final_Row_URN_Type = work_Sheet.Cells(Rows.Count, "J").End(xlUp).Row
     
     For Counter = 3 To Final_Row_URN_Type
     
@@ -390,9 +415,9 @@ Private Sub URN_Type()
         calculate_Sheet.Cells(Counter, 3).Value = "=IF(OR(RIGHT(TRIM(RC[-1]),1)="")"",RIGHT(TRIM(RC[-1]),1)=""."",RIGHT(TRIM(RC[-1]),1)="",""),LEFT(TRIM(RC[-1]),LEN(TRIM(RC[-1]))-1),TRIM(RC[-1]))"
                 
         calculate_Sheet.Cells(Counter, 3).Copy
-        calculate_Sheet.Cells(Counter, 4).PasteSpecial xlPasteValues
+        final_Sheet.Cells(Counter - 1, "J").PasteSpecial xlPasteValues
             
-        With calculate_Sheet.Cells(Counter, 4)
+        With final_Sheet.Cells(Counter - 1, "J")
             .HorizontalAlignment = xlLeft
             .VerticalAlignment = xlBottom
             .WrapText = False
@@ -403,7 +428,7 @@ Private Sub URN_Type()
             .ReadingOrder = xlContext
             .MergeCells = False
         End With
-        Worksheets("Final_Sheet").Cells(Counter - 1, "J").Value = calculate_Sheet.Cells(Counter, 4).Value
+        'Worksheets("Final_Sheet").Cells(Counter - 1, "J").Value = calculate_Sheet.Cells(Counter, 4).Value
     Next Counter
 End Sub
 Private Sub URN_Number()
@@ -416,7 +441,7 @@ Private Sub URN_Number()
     Set work_Sheet = work_Book.Worksheets("Sheet1")
     Set calculate_Sheet = work_Book.Worksheets("Calculate_Sheet")
     Set final_Sheet = work_Book.Worksheets("Final_Sheet")
-    Final_Row_URN_Number = Cells(Rows.Count, "K").End(xlUp).Row
+    Final_Row_URN_Number = work_Sheet.Cells(Rows.Count, "K").End(xlUp).Row
     
     For Counter = 3 To Final_Row_URN_Number
         calculate_Sheet.Cells(Counter, 1).Value = work_Sheet.Cells(Counter, "K").Value
@@ -452,9 +477,9 @@ Private Sub URN_Number()
         calculate_Sheet.Cells(Counter, 3).Value = "=IF(OR(RIGHT(TRIM(RC[-1]),1)="")"",RIGHT(TRIM(RC[-1]),1)=""."",RIGHT(TRIM(RC[-1]),1)="",""),LEFT(TRIM(RC[-1]),LEN(TRIM(RC[-1]))-1),TRIM(RC[-1]))"
                 
         calculate_Sheet.Cells(Counter, 3).Copy
-        calculate_Sheet.Cells(Counter, 4).PasteSpecial xlPasteValues
+        final_Sheet.Cells(Counter - 1, "K").PasteSpecial xlPasteValues
             
-        With calculate_Sheet.Cells(Counter, 4)
+        With final_Sheet.Cells(Counter - 1, "K")
             .HorizontalAlignment = xlLeft
             .VerticalAlignment = xlBottom
             .WrapText = False
@@ -465,7 +490,7 @@ Private Sub URN_Number()
             .ReadingOrder = xlContext
             .MergeCells = False
         End With
-        Worksheets("Final_Sheet").Cells(Counter - 1, "K").Value = calculate_Sheet.Cells(Counter, 4).Value
+        'Worksheets("Final_Sheet").Cells(Counter - 1, "K").Value = calculate_Sheet.Cells(Counter, 4).Value
     Next Counter
 End Sub
 Private Sub Address_Type()
@@ -478,7 +503,7 @@ Private Sub Address_Type()
     Set work_Sheet = work_Book.Worksheets("Sheet1")
     Set calculate_Sheet = work_Book.Worksheets("Calculate_Sheet")
     Set final_Sheet = work_Book.Worksheets("Final_Sheet")
-    Final_Row_Address_Type = Cells(Rows.Count, "O").End(xlUp).Row
+    Final_Row_Address_Type = work_Sheet.Cells(Rows.Count, "O").End(xlUp).Row
     
     For Counter = 3 To Final_Row_Address_Type
         calculate_Sheet.Cells(Counter, 1).Value = work_Sheet.Cells(Counter, "O").Value
@@ -514,9 +539,9 @@ Private Sub Address_Type()
         calculate_Sheet.Cells(Counter, 3).Value = "=IF(OR(RIGHT(TRIM(RC[-1]),1)="")"",RIGHT(TRIM(RC[-1]),1)=""."",RIGHT(TRIM(RC[-1]),1)="",""),LEFT(TRIM(RC[-1]),LEN(TRIM(RC[-1]))-1),TRIM(RC[-1]))"
                 
         calculate_Sheet.Cells(Counter, 3).Copy
-        calculate_Sheet.Cells(Counter, 4).PasteSpecial xlPasteValues
+        final_Sheet.Cells(Counter - 1, "O").PasteSpecial xlPasteValues
             
-        With calculate_Sheet.Cells(Counter, 4)
+        With final_Sheet.Cells(Counter - 1, "O")
             .HorizontalAlignment = xlLeft
             .VerticalAlignment = xlBottom
             .WrapText = False
@@ -527,11 +552,11 @@ Private Sub Address_Type()
             .ReadingOrder = xlContext
             .MergeCells = False
         End With
-        Worksheets("Final_Sheet").Cells(Counter - 1, "O").Value = calculate_Sheet.Cells(Counter, 4).Value
+        'Worksheets("Final_Sheet").Cells(Counter - 1, "O").Value = calculate_Sheet.Cells(Counter, 4).Value
     Next Counter
 End Sub
-Private Sub Address_1()
-    Dim Final_Row_Address_1
+Private Sub Address()
+    Dim Final_Row_Address
     Dim work_Book As Workbook
     Dim work_Sheet As Worksheet
     Dim calculate_Sheet As Worksheet
@@ -542,9 +567,9 @@ Private Sub Address_1()
     Set work_Sheet = work_Book.Worksheets("Sheet1")
     Set calculate_Sheet = work_Book.Worksheets("Calculate_Sheet")
     Set final_Sheet = work_Book.Worksheets("Final_Sheet")
-    Final_Row_Address_1 = work_Sheet.Cells(Rows.Count, "P").End(xlUp).Row
+    Final_Row_Address = work_Sheet.Cells(Rows.Count, "P").End(xlUp).Row
     
-    For Counter = 3 To Final_Row_Address_1
+    For Counter = 3 To Final_Row_Address 'Address 1
         calculate_Sheet.Cells(Counter, 1).Value = work_Sheet.Cells(Counter, "P").Value
         calculate_Sheet.Cells(Counter, 2).Value = calculate_Sheet.Cells(Counter, 1).Value
         
@@ -580,12 +605,71 @@ Private Sub Address_1()
         calculate_Sheet.Cells(Counter, 3).Copy
         calculate_Sheet.Cells(Counter, 4).PasteSpecial xlPasteValues
             
+        With calculate_Sheet.Cells(Counter, 4)
+            .HorizontalAlignment = xlLeft
+            .VerticalAlignment = xlBottom
+            .WrapText = False
+            .Orientation = 0
+            .AddIndent = False
+            .IndentLevel = 0
+            .ShrinkToFit = False
+            .ReadingOrder = xlContext
+            .MergeCells = False
+        End With
+            
         If Len(calculate_Sheet.Cells(Counter, 4).Value) > 70 Then
         'MsgBox ("ee")
-            calculate_Sheet.Cells(Counter, 4).TextToColumns Destination:=calculate_Sheet.Cells(Counter, "E"), DataType:=xlFixedWidth, _
+            calculate_Sheet.Cells(Counter, 4).TextToColumns Destination:=calculate_Sheet.Cells(Counter, "D"), DataType:=xlFixedWidth, _
                 FieldInfo:=Array(Array(0, 1), Array(70, 1)), TrailingMinusNumbers:=True
+            final_Sheet.Cells(Counter - 1, "Q").Value = calculate_Sheet.Cells(Counter, 5).Value
             'Columns("P:P").EntireColumn.AutoFit
         End If
+            
+        final_Sheet.Cells(Counter - 1, "P").Value = calculate_Sheet.Cells(Counter, 4).Value
+'        If IsEmpty(final_Sheet.Cells(Counter - 1, "Q")) Then
+'            final_Sheet.Cells(Counter, "Q").Value = calculate_Sheet.Cells(Counter, 6).Value
+'        ElseIf Not IsEmpty(final_Sheet.Cells(Counter - 1, "Q")) Then
+'            final_Sheet.Cells(Counter - 1, "Q").Cut final_Sheet.Cells(Counter - 1, "R")
+'            final_Sheet.Cells(Counter, "Q").Value = calculate_Sheet.Cells(Counter, 6).Value
+'        End If
+        
+    Next Counter
+    
+    For Counter = 3 To Final_Row_Address 'Address 2
+        calculate_Sheet.Cells(Counter, 1).Value = work_Sheet.Cells(Counter, "Q").Value
+        calculate_Sheet.Cells(Counter, 2).Value = calculate_Sheet.Cells(Counter, 1).Value
+        
+        calculate_Sheet.Cells(Counter, 2).Replace What:="`", Replacement:="", LookAt:=xlPart, SearchOrder:= _
+            xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+            
+        calculate_Sheet.Cells(Counter, 2).Replace What:="!", Replacement:="", LookAt:=xlPart, SearchOrder:= _
+            xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+            
+        calculate_Sheet.Cells(Counter, 2).Replace What:="@", Replacement:="AT", LookAt:=xlPart, SearchOrder:= _
+            xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+            
+        calculate_Sheet.Cells(Counter, 2).Replace What:="#", Replacement:="", LookAt:=xlPart, SearchOrder:= _
+            xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+            
+        calculate_Sheet.Cells(Counter, 2).Replace What:="$", Replacement:="", LookAt:=xlPart, SearchOrder:= _
+            xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+            
+        calculate_Sheet.Cells(Counter, 2).Replace What:="%", Replacement:="", LookAt:=xlPart, SearchOrder:= _
+            xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+            
+        calculate_Sheet.Cells(Counter, 2).Replace What:="^", Replacement:="", LookAt:=xlPart, SearchOrder:= _
+            xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+            
+        calculate_Sheet.Cells(Counter, 2).Replace What:="&", Replacement:="AND", LookAt:=xlPart, SearchOrder:= _
+            xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+            
+        calculate_Sheet.Cells(Counter, 2).Replace What:="  ", Replacement:=" ", LookAt:=xlPart, SearchOrder:= _
+            xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+            
+        calculate_Sheet.Cells(Counter, 3).Value = "=IF(OR(RIGHT(TRIM(RC[-1]),1)="")"",RIGHT(TRIM(RC[-1]),1)=""."",RIGHT(TRIM(RC[-1]),1)="",""),LEFT(TRIM(RC[-1]),LEN(TRIM(RC[-1]))-1),TRIM(RC[-1]))"
+                
+        calculate_Sheet.Cells(Counter, 3).Copy
+        calculate_Sheet.Cells(Counter, 4).PasteSpecial xlPasteValues
             
         With calculate_Sheet.Cells(Counter, 4)
             .HorizontalAlignment = xlLeft
@@ -599,15 +683,18 @@ Private Sub Address_1()
             .MergeCells = False
         End With
         
-        final_Sheet.Cells(Counter - 1, "P").Value = calculate_Sheet.Cells(Counter, 5).Value
-        
-        If IsEmpty(final_Sheet.Cells(Counter - 1, "Q")) Then
-            final_Sheet.Cells(Counter - 1, "Q").Value = calculate_Sheet.Cells(Counter, 6).Value
+        If Len(calculate_Sheet.Cells(Counter, 4).Value) > 70 Then
+            calculate_Sheet.Cells(Counter, 4).TextToColumns Destination:=calculate_Sheet.Cells(Counter, "E"), DataType:=xlFixedWidth, _
+                FieldInfo:=Array(Array(0, 1), Array(70, 1)), TrailingMinusNumbers:=True
+            final_Sheet.Cells(Counter - 1, "R").Value = calculate_Sheet.Cells(Counter, 5).Value
         End If
         
-        If Not IsEmpty(final_Sheet.Cells(Counter - 1, "Q")) Then
-            final_Sheet.Cells(Counter - 1, "Q").Cut final_Sheet.Cells(Counter - 1, "R")
-            final_Sheet.Cells(Counter - 1, "Q").Value = calculate_Sheet.Cells(Counter, 6).Value
+        'final_Sheet.Cells(Counter - 1, "P").Value = calculate_Sheet.Cells(Counter, 5).Value
+        If IsEmpty(final_Sheet.Cells(Counter - 1, "Q")) Then
+            final_Sheet.Cells(Counter - 1, "Q").Value = calculate_Sheet.Cells(Counter, 4).Value
+        ElseIf Not IsEmpty(final_Sheet.Cells(Counter - 1, "Q")) Then
+            'final_Sheet.Cells(Counter - 1, "Q").Cut final_Sheet.Cells(Counter - 1, "R")
+            final_Sheet.Cells(Counter, "R").Value = calculate_Sheet.Cells(Counter, 4).Value
         End If
         
     Next Counter
@@ -658,9 +745,9 @@ Private Sub Street_Name()
         calculate_Sheet.Cells(Counter, 3).Value = "=IF(OR(RIGHT(TRIM(RC[-1]),1)="")"",RIGHT(TRIM(RC[-1]),1)=""."",RIGHT(TRIM(RC[-1]),1)="",""),LEFT(TRIM(RC[-1]),LEN(TRIM(RC[-1]))-1),TRIM(RC[-1]))"
                 
         calculate_Sheet.Cells(Counter, 3).Copy
-        calculate_Sheet.Cells(Counter, 4).PasteSpecial xlPasteValues
+        final_Sheet.Cells(Counter - 1, "U").PasteSpecial xlPasteValues
             
-        With calculate_Sheet.Cells(Counter, 4)
+        With final_Sheet.Cells(Counter - 1, "U")
             .HorizontalAlignment = xlLeft
             .VerticalAlignment = xlBottom
             .WrapText = False
@@ -671,7 +758,7 @@ Private Sub Street_Name()
             .ReadingOrder = xlContext
             .MergeCells = False
         End With
-        Worksheets("Final_Sheet").Cells(Counter - 1, "U").Value = calculate_Sheet.Cells(Counter, 4).Value
+        'Worksheets("Final_Sheet").Cells(Counter - 1, "U").Value = calculate_Sheet.Cells(Counter, 4).Value
     Next Counter
 End Sub
 Private Sub Building_No()
@@ -721,9 +808,9 @@ Private Sub Building_No()
         calculate_Sheet.Cells(Counter, 4).Value = "=LEFT(RC[-1], 16)"
                 
         calculate_Sheet.Cells(Counter, 4).Copy
-        calculate_Sheet.Cells(Counter, 5).PasteSpecial xlPasteValues
+        final_Sheet.Cells(Counter - 1, "V").PasteSpecial xlPasteValues
             
-        With calculate_Sheet.Cells(Counter, 5)
+        With final_Sheet.Cells(Counter - 1, "V")
             .HorizontalAlignment = xlLeft
             .VerticalAlignment = xlBottom
             .WrapText = False
@@ -734,7 +821,7 @@ Private Sub Building_No()
             .ReadingOrder = xlContext
             .MergeCells = False
         End With
-        Worksheets("Final_Sheet").Cells(Counter - 1, "V").Value = calculate_Sheet.Cells(Counter, 5).Value
+        'Worksheets("Final_Sheet").Cells(Counter - 1, "V").Value = calculate_Sheet.Cells(Counter, 5).Value
     Next Counter
 End Sub
 Private Sub PO_Box()
@@ -747,7 +834,7 @@ Private Sub PO_Box()
     Set work_Sheet = work_Book.Worksheets("Sheet1")
     Set calculate_Sheet = work_Book.Worksheets("Calculate_Sheet")
     Set final_Sheet = work_Book.Worksheets("Final_Sheet")
-    Final_Row_PO_Box = Cells(Rows.Count, "W").End(xlUp).Row
+    Final_Row_PO_Box = work_Sheet.Cells(Rows.Count, "W").End(xlUp).Row
     
     For Counter = 3 To Final_Row_PO_Box
         calculate_Sheet.Cells(Counter, 1).Value = work_Sheet.Cells(Counter, "W").Value
@@ -784,9 +871,9 @@ Private Sub PO_Box()
         calculate_Sheet.Cells(Counter, 4).Value = "=LEFT(RC[-1], 16)"
                 
         calculate_Sheet.Cells(Counter, 4).Copy
-        calculate_Sheet.Cells(Counter, 5).PasteSpecial xlPasteValues
+        final_Sheet.Cells(Counter - 1, "W").PasteSpecial xlPasteValues
             
-        With calculate_Sheet.Cells(Counter, 4)
+        With final_Sheet.Cells(Counter - 1, "W")
             .HorizontalAlignment = xlLeft
             .VerticalAlignment = xlBottom
             .WrapText = False
@@ -797,7 +884,7 @@ Private Sub PO_Box()
             .ReadingOrder = xlContext
             .MergeCells = False
         End With
-        Worksheets("Final_Sheet").Cells(Counter - 1, "W").Value = calculate_Sheet.Cells(Counter, 5).Value
+        'final_Sheet.Cells(Counter - 1, "W").Value = calculate_Sheet.Cells(Counter, 5).Value
     Next Counter
 End Sub
 Private Sub Postal_Code()
@@ -810,7 +897,7 @@ Private Sub Postal_Code()
     Set work_Sheet = work_Book.Worksheets("Sheet1")
     Set calculate_Sheet = work_Book.Worksheets("Calculate_Sheet")
     Set final_Sheet = work_Book.Worksheets("Final_Sheet")
-    Final_Row_Postal_Code = Cells(Rows.Count, "X").End(xlUp).Row
+    Final_Row_Postal_Code = work_Sheet.Cells(Rows.Count, "X").End(xlUp).Row
     
     For Counter = 3 To Final_Row_Postal_Code
         calculate_Sheet.Cells(Counter, 1).Value = work_Sheet.Cells(Counter, "X").Value
@@ -847,9 +934,9 @@ Private Sub Postal_Code()
         calculate_Sheet.Cells(Counter, 4).Value = "=LEFT(RC[-1], 16)"
                 
         calculate_Sheet.Cells(Counter, 4).Copy
-        calculate_Sheet.Cells(Counter, 5).PasteSpecial xlPasteValues
+        final_Sheet.Cells(Counter - 1, "X").PasteSpecial xlPasteValues
             
-        With calculate_Sheet.Cells(Counter, 4)
+        With final_Sheet.Cells(Counter - 1, "X")
             .HorizontalAlignment = xlLeft
             .VerticalAlignment = xlBottom
             .WrapText = False
@@ -860,7 +947,7 @@ Private Sub Postal_Code()
             .ReadingOrder = xlContext
             .MergeCells = False
         End With
-        Worksheets("Final_Sheet").Cells(Counter - 1, "X").Value = calculate_Sheet.Cells(Counter, 5).Value
+        'final_Sheet.Cells(Counter - 1, "X").Value = calculate_Sheet.Cells(Counter, 5).Value
     Next Counter
 End Sub
 Private Sub Town()
@@ -874,7 +961,7 @@ Private Sub Town()
     Set calculate_Sheet = work_Book.Worksheets("Calculate_Sheet")
     Set final_Sheet = work_Book.Worksheets("Final_Sheet")
     
-    Final_Row_Town = Cells(Rows.Count, "Y").End(xlUp).Row
+    Final_Row_Town = work_Sheet.Cells(Rows.Count, "Y").End(xlUp).Row
     For Counter = 3 To Final_Row_Town
         calculate_Sheet.Cells(Counter, 1).Value = work_Sheet.Cells(Counter, "Y").Value
         calculate_Sheet.Cells(Counter, 2).Value = calculate_Sheet.Cells(Counter, 1).Value
@@ -910,9 +997,9 @@ Private Sub Town()
         calculate_Sheet.Cells(Counter, 4).Value = "=LEFT(RC[-1], 35)"
                 
         calculate_Sheet.Cells(Counter, 4).Copy
-        calculate_Sheet.Cells(Counter, 5).PasteSpecial xlPasteValues
+        final_Sheet.Cells(Counter - 1, "Y").PasteSpecial xlPasteValues
             
-        With calculate_Sheet.Cells(Counter, 4)
+        With final_Sheet.Cells(Counter - 1, "Y")
             .HorizontalAlignment = xlLeft
             .VerticalAlignment = xlBottom
             .WrapText = False
@@ -923,7 +1010,7 @@ Private Sub Town()
             .ReadingOrder = xlContext
             .MergeCells = False
         End With
-        Worksheets("Final_Sheet").Cells(Counter - 1, "Y").Value = calculate_Sheet.Cells(Counter, 5).Value
+        'final_Sheet.Cells(Counter - 1, "Y").Value = calculate_Sheet.Cells(Counter, 5).Value
     Next Counter
 End Sub
 Private Sub Province()
@@ -936,7 +1023,7 @@ Private Sub Province()
     Set work_Sheet = work_Book.Worksheets("Sheet1")
     Set calculate_Sheet = work_Book.Worksheets("Calculate_Sheet")
     Set final_Sheet = work_Book.Worksheets("Final_Sheet")
-    Final_Row_Province = Cells(Rows.Count, "Z").End(xlUp).Row
+    Final_Row_Province = work_Sheet.Cells(Rows.Count, "Z").End(xlUp).Row
     
     For Counter = 3 To Final_Row_Province
         calculate_Sheet.Cells(Counter, 1).Value = work_Sheet.Cells(Counter, "Z").Value
@@ -972,9 +1059,9 @@ Private Sub Province()
         calculate_Sheet.Cells(Counter, 3).Value = "=IF(OR(RIGHT(TRIM(RC[-1]),1)="")"",RIGHT(TRIM(RC[-1]),1)=""."",RIGHT(TRIM(RC[-1]),1)="",""),LEFT(TRIM(RC[-1]),LEN(TRIM(RC[-1]))-1),TRIM(RC[-1]))"
                 
         calculate_Sheet.Cells(Counter, 3).Copy
-        calculate_Sheet.Cells(Counter, 4).PasteSpecial xlPasteValues
+        final_Sheet.Cells(Counter - 1, "Z").PasteSpecial xlPasteValues
             
-        With calculate_Sheet.Cells(Counter, 4)
+        With final_Sheet.Cells(Counter - 1, "Z")
             .HorizontalAlignment = xlLeft
             .VerticalAlignment = xlBottom
             .WrapText = False
@@ -985,7 +1072,7 @@ Private Sub Province()
             .ReadingOrder = xlContext
             .MergeCells = False
         End With
-        Worksheets("Final_Sheet").Cells(Counter - 1, "Z").Value = calculate_Sheet.Cells(Counter, 4).Value
+        'final_Sheet.Cells(Counter - 1, "Z").Value = calculate_Sheet.Cells(Counter, 4).Value
     Next Counter
 End Sub
 Private Sub Country_Code()
@@ -998,7 +1085,7 @@ Private Sub Country_Code()
     Set work_Sheet = work_Book.Worksheets("Sheet1")
     Set calculate_Sheet = work_Book.Worksheets("Calculate_Sheet")
     Set final_Sheet = work_Book.Worksheets("Final_Sheet")
-    Final_Row_Country_Code = Cells(Rows.Count, "AA").End(xlUp).Row
+    Final_Row_Country_Code = work_Sheet.Cells(Rows.Count, "AA").End(xlUp).Row
     
     For Counter = 3 To Final_Row_Country_Code
         calculate_Sheet.Cells(Counter, 1).Value = work_Sheet.Cells(Counter, "AA").Value
@@ -1034,9 +1121,9 @@ Private Sub Country_Code()
         calculate_Sheet.Cells(Counter, 3).Value = "=IF(OR(RIGHT(TRIM(RC[-1]),1)="")"",RIGHT(TRIM(RC[-1]),1)=""."",RIGHT(TRIM(RC[-1]),1)="",""),LEFT(TRIM(RC[-1]),LEN(TRIM(RC[-1]))-1),TRIM(RC[-1]))"
                 
         calculate_Sheet.Cells(Counter, 3).Copy
-        calculate_Sheet.Cells(Counter, 4).PasteSpecial xlPasteValues
+        final_Sheet.Cells(Counter - 1, "AA").PasteSpecial xlPasteValues
             
-        With calculate_Sheet.Cells(Counter, 4)
+        With final_Sheet.Cells(Counter - 1, "AA")
             .HorizontalAlignment = xlLeft
             .VerticalAlignment = xlBottom
             .WrapText = False
@@ -1047,7 +1134,7 @@ Private Sub Country_Code()
             .ReadingOrder = xlContext
             .MergeCells = False
         End With
-        Worksheets("Final_Sheet").Cells(Counter - 1, "AA").Value = calculate_Sheet.Cells(Counter, 4).Value
+        'final_Sheet.Cells(Counter - 1, "AA").Value = calculate_Sheet.Cells(Counter, 4).Value
     Next Counter
 End Sub
 Private Sub Account_Length() 'Check if Account Number Length is correct for User_Input CID
@@ -1062,27 +1149,26 @@ Private Sub Account_Length() 'Check if Account Number Length is correct for User
     Set final_Sheet = work_Book.Worksheets("Final_Sheet")
     Dim Account_Num_Length As String
     Dim CID As String
-    Dim Incorrect_Account_Length As Boolean
+    'Dim Incorrect_Account_Length As Boolean
     CID = InputBox("Enter CID")
     Final_Row_Account_Num = work_Sheet.Cells(Rows.Count, 2).End(xlUp).Row
     
     For Counter = 3 To Final_Row_Account_Num
         If Len(work_Sheet.Cells(Counter, 2).Value) <> 5 And CID = "55P" Then
-            Incorrect_Account_Length = True
+            incorrect_Account_Length = True
             work_Sheet.Cells(Counter, 2).Interior.ColorIndex = 35
         End If
         If Len(work_Sheet.Cells(Counter, 2).Value) <> 11 And CID = "5DU" Then
-            Incorrect_Account_Length = True
+            incorrect_Account_Length = True
             work_Sheet.Cells(Counter, 2).Interior.ColorIndex = 35
         End If
     Next Counter
-    If Incorrect_Account_Length Then
+    If incorrect_Account_Length Then
         MsgBox ("Cells with Incorrect Account Length have been hightlighted and sorted for you")
-        Incorrect_Account_Length = False
+        'incorrect_Account_Length = False
         work_Sheet.Range("B:B").AutoFilter Field:=1, Criteria1:=RGB(204, 255 _
         , 204), Operator:=xlFilterCellColor
     End If
-    
 End Sub
 Private Sub Create_Calculation_Sheet() 'Create a Calculate_Sheet and Final_Sheet if none exist
 Attribute Create_Calculation_Sheet.VB_ProcData.VB_Invoke_Func = " \n14"
