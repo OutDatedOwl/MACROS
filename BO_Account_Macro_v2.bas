@@ -725,6 +725,8 @@ Private Sub Address()
             End If
         Next account_Address_Cell_1
         
+ '------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        
     final_Row_Data = work_Sheet.Cells(Rows.Count, "Q").End(xlUp).Row 'final_Row for Address 2
     
     If final_Row_Data <> 1 Then 'Address 2, final_Row_Data cannot be 1
@@ -849,6 +851,7 @@ Private Sub Address()
 '        Next invalid_Data
 '    Next account_Address_Cell_1
     
+'------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
         
     final_Row_Data = work_Sheet.Cells(Rows.Count, "R").End(xlUp).Row 'final_Row for Address 3
     
@@ -859,8 +862,8 @@ Private Sub Address()
             If Not IsEmpty(account_Address_Cell_3.Value) Then 'If not empty then load into adjacent column ->
                 work_Sheet.Range(work_Sheet.Cells(account_Address_Cell_3.Row, "R"), work_Sheet.Cells(account_Address_Cell_3.Row, "R")).Copy
 
-'                final_Sheet.Range(final_Sheet.Cells(account_Address_Cell_3.Row, "S"), final_Sheet.Cells(account_Address_Cell_3.Row, "S")).PasteSpecial xlPasteValues
-'                final_Sheet.Range(final_Sheet.Cells(account_Address_Cell_3.Row, "S"), final_Sheet.Cells(account_Address_Cell_3.Row, "S")).PasteSpecial xlPasteFormats
+                final_Sheet.Range(final_Sheet.Cells(account_Address_Cell_3.Row, "S"), final_Sheet.Cells(account_Address_Cell_3.Row, "S")).PasteSpecial xlPasteValues
+                final_Sheet.Range(final_Sheet.Cells(account_Address_Cell_3.Row, "S"), final_Sheet.Cells(account_Address_Cell_3.Row, "S")).PasteSpecial xlPasteFormats
 '
 '                final_Sheet.Range(final_Sheet.Cells(account_Address_Cell_3.Row, "S"), final_Sheet.Cells(account_Address_Cell_3.Row, "S")).Replace What:="`,!,@,#,$,%,^", Replacement:="", LookAt:= _
 '                    xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
@@ -884,8 +887,8 @@ Private Sub Address()
             If IsEmpty(account_Address_Cell_3.Value) Then  'Checking if cell contains text from Address 2, if empty then load into correct column
                 work_Sheet.Range(work_Sheet.Cells(account_Address_Cell_3.Row, "R"), work_Sheet.Cells(account_Address_Cell_3.Row, "R")).Copy
 
-'                final_Sheet.Range(final_Sheet.Cells(account_Address_Cell_3.Row, "R"), final_Sheet.Cells(account_Address_Cell_3.Row, "R")).PasteSpecial xlPasteValues
-'                final_Sheet.Range(final_Sheet.Cells(account_Address_Cell_3.Row, "R"), final_Sheet.Cells(account_Address_Cell_3.Row, "R")).PasteSpecial xlPasteFormats
+                final_Sheet.Range(final_Sheet.Cells(account_Address_Cell_3.Row, "R"), final_Sheet.Cells(account_Address_Cell_3.Row, "R")).PasteSpecial xlPasteValues
+                final_Sheet.Range(final_Sheet.Cells(account_Address_Cell_3.Row, "R"), final_Sheet.Cells(account_Address_Cell_3.Row, "R")).PasteSpecial xlPasteFormats
 '
 '                final_Sheet.Range(final_Sheet.Cells(account_Address_Cell_3.Row, "R"), final_Sheet.Cells(account_Address_Cell_3.Row, "R")).Replace What:="`,!,@,#,$,%,^", Replacement:="", LookAt:= _
 '                    xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
@@ -915,6 +918,143 @@ Private Sub Address()
                         FieldInfo:=Array(Array(0, 1), Array(70, 1)), TrailingMinusNumbers:=True
             End If
         Next account_Address_Cell_3
+    End If
+    
+'------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+    
+    If final_Row_Data <> 1 Then 'Address 4,final_Row_Data cannot be 1
+        Set account_Address_4_Range = final_Sheet.Range(final_Sheet.Cells(2, "S"), final_Sheet.Cells(final_Row_Data, "S")) 'Set up Address Range 4
+        
+        For Each account_Address_Cell_4 In account_Address_4_Range.Cells
+            If Not IsEmpty(account_Address_Cell_4.Value) Then 'If not empty then load into adjacent column ->
+                work_Sheet.Range(work_Sheet.Cells(account_Address_Cell_4.Row, "S"), work_Sheet.Cells(account_Address_Cell_4.Row, "S")).Copy
+
+                final_Sheet.Range(final_Sheet.Cells(account_Address_Cell_4.Row, "S"), final_Sheet.Cells(account_Address_Cell_4.Row, "S")).PasteSpecial xlPasteValues
+                final_Sheet.Range(final_Sheet.Cells(account_Address_Cell_4.Row, "S"), final_Sheet.Cells(account_Address_Cell_4.Row, "S")).PasteSpecial xlPasteFormats
+'
+'                final_Sheet.Range(final_Sheet.Cells(account_Address_Cell_4.Row, "S"), final_Sheet.Cells(account_Address_Cell_4.Row, "S")).Replace What:="`,!,@,#,$,%,^", Replacement:="", LookAt:= _
+'                    xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+'
+'                final_Sheet.Range(final_Sheet.Cells(account_Address_Cell_4.Row, "S"), final_Sheet.Cells(account_Address_Cell_4.Row, "S")).Replace What:="@", Replacement:="AT", LookAt:= _
+'                    xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+'
+'                final_Sheet.Range(final_Sheet.Cells(account_Address_Cell_4.Row, "S"), final_Sheet.Cells(account_Address_Cell_4.Row, "S")).Replace What:="&", Replacement:="AND", LookAt:= _
+'                    xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+'
+'                final_Sheet.Range(final_Sheet.Cells(account_Address_Cell_4.Row, "S"), final_Sheet.Cells(account_Address_Cell_4.Row, "S")).Replace What:="  ", Replacement:=" ", LookAt:= _
+'                    xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+
+                final_Sheet.Range(final_Sheet.Cells(account_Address_Cell_4.Row, "T"), final_Sheet.Cells(account_Address_Cell_4.Row, "T")).Value = _
+                    "=IF(OR(RIGHT(TRIM(RC[-1]),1)="")"",RIGHT(TRIM(RC[-1]),1)=""."",RIGHT(TRIM(RC[-1]),1)="",""),LEFT(TRIM(RC[-1]),LEN(TRIM(RC[-1]))-1),TRIM(RC[-1]))"
+
+                final_Sheet.Range(final_Sheet.Cells(account_Address_Cell_4.Row, "T"), final_Sheet.Cells(account_Address_Cell_4.Row, "T")).Copy
+                final_Sheet.Range(final_Sheet.Cells(account_Address_Cell_4.Row, "S"), final_Sheet.Cells(account_Address_Cell_4.Row, "S")).PasteSpecial xlPasteValues
+                final_Sheet.Range(final_Sheet.Cells(account_Address_Cell_4.Row, "T"), final_Sheet.Cells(account_Address_Cell_4.Row, "T")).ClearContents
+            End If
+            If IsEmpty(account_Address_Cell_4.Value) Then  'Checking if cell contains text from Address 2, if empty then load into correct column
+                work_Sheet.Range(work_Sheet.Cells(account_Address_Cell_4.Row, "R"), work_Sheet.Cells(account_Address_Cell_4.Row, "R")).Copy
+
+'                final_Sheet.Range(final_Sheet.Cells(account_Address_Cell_4.Row, "R"), final_Sheet.Cells(account_Address_Cell_4.Row, "R")).PasteSpecial xlPasteValues
+'                final_Sheet.Range(final_Sheet.Cells(account_Address_Cell_4.Row, "R"), final_Sheet.Cells(account_Address_Cell_4.Row, "R")).PasteSpecial xlPasteFormats
+'
+'                final_Sheet.Range(final_Sheet.Cells(account_Address_Cell_4.Row, "R"), final_Sheet.Cells(account_Address_Cell_4.Row, "R")).Replace What:="`,!,@,#,$,%,^", Replacement:="", LookAt:= _
+'                    xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+'
+'                final_Sheet.Range(final_Sheet.Cells(account_Address_Cell_4.Row, "R"), final_Sheet.Cells(account_Address_Cell_4.Row, "R")).Replace What:="@", Replacement:="AT", LookAt:= _
+'                    xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+'
+'                final_Sheet.Range(final_Sheet.Cells(account_Address_Cell_4.Row, "R"), final_Sheet.Cells(account_Address_Cell_4.Row, "R")).Replace What:="&", Replacement:="AND", LookAt:= _
+'                    xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+'
+'                final_Sheet.Range(final_Sheet.Cells(account_Address_Cell_4.Row, "R"), final_Sheet.Cells(account_Address_Cell_4.Row, "R")).Replace What:="  ", Replacement:=" ", LookAt:= _
+'                    xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+
+                final_Sheet.Range(final_Sheet.Cells(account_Address_Cell_4.Row, "S"), final_Sheet.Cells(account_Address_Cell_4.Row, "S")).Value = _
+                    "=IF(OR(RIGHT(TRIM(RC[-1]),1)="")"",RIGHT(TRIM(RC[-1]),1)=""."",RIGHT(TRIM(RC[-1]),1)="",""),LEFT(TRIM(RC[-1]),LEN(TRIM(RC[-1]))-1),TRIM(RC[-1]))"
+
+                final_Sheet.Range(final_Sheet.Cells(account_Address_Cell_4.Row, "S"), final_Sheet.Cells(account_Address_Cell_4.Row, "S")).Copy
+                final_Sheet.Range(final_Sheet.Cells(account_Address_Cell_4.Row, "R"), final_Sheet.Cells(account_Address_Cell_4.Row, "R")).PasteSpecial xlPasteValues
+                final_Sheet.Range(final_Sheet.Cells(account_Address_Cell_4.Row, "S"), final_Sheet.Cells(account_Address_Cell_4.Row, "S")).ClearContents
+            End If
+        Next account_Address_Cell_4
+        
+        For Each account_Address_Cell_4 In account_Address_4_Range.Cells 'Address 4 Text to Columns
+            If Len(account_Address_Cell_4.Value) > 70 Then
+                final_Sheet.Range(final_Sheet.Cells(account_Address_Cell_4.Row, "S"), final_Sheet.Cells(account_Address_Cell_4.Row, "S")).TextToColumns Destination:= _
+                    final_Sheet.Range(final_Sheet.Cells(account_Address_Cell_4.Row, "S"), final_Sheet.Cells(account_Address_Cell_4.Row, "S")), DataType:=xlFixedWidth, _
+                        FieldInfo:=Array(Array(0, 1), Array(70, 1)), TrailingMinusNumbers:=True
+            End If
+        Next account_Address_Cell_4
+    End If
+    
+'------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+    If final_Row_Data <> 1 Then 'Address 5,final_Row_Data cannot be 1
+        Set account_Address_5_Range = final_Sheet.Range(final_Sheet.Cells(2, "T"), final_Sheet.Cells(final_Row_Data, "T")) 'Set up Address Range 5
+        
+        For Each account_Address_Cell_5 In account_Address_5_Range.Cells
+            If Not IsEmpty(account_Address_Cell_5.Value) Then 'If not empty then load into adjacent column ->
+                If Len(account_Address_Cell_5) > 70 Then
+                    account_Address_Cell_5 = Left(account_Address_Cell_5, 70)
+                End If
+'                work_Sheet.Range(work_Sheet.Cells(account_Address_Cell_5.Row, "T"), work_Sheet.Cells(account_Address_Cell_5.Row, "T")).Copy
+'
+'                final_Sheet.Range(final_Sheet.Cells(account_Address_Cell_5.Row, "S"), final_Sheet.Cells(account_Address_Cell_5.Row, "S")).PasteSpecial xlPasteValues
+'                final_Sheet.Range(final_Sheet.Cells(account_Address_Cell_5.Row, "S"), final_Sheet.Cells(account_Address_Cell_5.Row, "S")).PasteSpecial xlPasteFormats
+''
+''                final_Sheet.Range(final_Sheet.Cells(account_Address_Cell_5.Row, "S"), final_Sheet.Cells(account_Address_Cell_5.Row, "S")).Replace What:="`,!,@,#,$,%,^", Replacement:="", LookAt:= _
+''                    xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+''
+''                final_Sheet.Range(final_Sheet.Cells(account_Address_Cell_5.Row, "S"), final_Sheet.Cells(account_Address_Cell_5.Row, "S")).Replace What:="@", Replacement:="AT", LookAt:= _
+''                    xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+''
+''                final_Sheet.Range(final_Sheet.Cells(account_Address_Cell_5.Row, "S"), final_Sheet.Cells(account_Address_Cell_5.Row, "S")).Replace What:="&", Replacement:="AND", LookAt:= _
+''                    xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+''
+''                final_Sheet.Range(final_Sheet.Cells(account_Address_Cell_5.Row, "S"), final_Sheet.Cells(account_Address_Cell_5.Row, "S")).Replace What:="  ", Replacement:=" ", LookAt:= _
+''                    xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+'
+'                final_Sheet.Range(final_Sheet.Cells(account_Address_Cell_5.Row, "U"), final_Sheet.Cells(account_Address_Cell_5.Row, "U")).Value = _
+'                    "=IF(OR(RIGHT(TRIM(RC[-1]),1)="")"",RIGHT(TRIM(RC[-1]),1)=""."",RIGHT(TRIM(RC[-1]),1)="",""),LEFT(TRIM(RC[-1]),LEN(TRIM(RC[-1]))-1),TRIM(RC[-1]))"
+'
+'                final_Sheet.Range(final_Sheet.Cells(account_Address_Cell_5.Row, "U"), final_Sheet.Cells(account_Address_Cell_5.Row, "U")).Copy
+'                final_Sheet.Range(final_Sheet.Cells(account_Address_Cell_5.Row, "T"), final_Sheet.Cells(account_Address_Cell_5.Row, "T")).PasteSpecial xlPasteValues
+'                final_Sheet.Range(final_Sheet.Cells(account_Address_Cell_5.Row, "U"), final_Sheet.Cells(account_Address_Cell_5.Row, "U")).ClearContents
+            End If
+            If IsEmpty(account_Address_Cell_5.Value) Then  'Checking if cell contains text from Address 2, if empty then load into correct column
+                work_Sheet.Range(work_Sheet.Cells(account_Address_Cell_5.Row, "T"), work_Sheet.Cells(account_Address_Cell_5.Row, "T")).Copy
+
+'                final_Sheet.Range(final_Sheet.Cells(account_Address_Cell_5.Row, "R"), final_Sheet.Cells(account_Address_Cell_5.Row, "R")).PasteSpecial xlPasteValues
+'                final_Sheet.Range(final_Sheet.Cells(account_Address_Cell_5.Row, "R"), final_Sheet.Cells(account_Address_Cell_5.Row, "R")).PasteSpecial xlPasteFormats
+'
+'                final_Sheet.Range(final_Sheet.Cells(account_Address_Cell_5.Row, "R"), final_Sheet.Cells(account_Address_Cell_5.Row, "R")).Replace What:="`,!,@,#,$,%,^", Replacement:="", LookAt:= _
+'                    xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+'
+'                final_Sheet.Range(final_Sheet.Cells(account_Address_Cell_5.Row, "R"), final_Sheet.Cells(account_Address_Cell_5.Row, "R")).Replace What:="@", Replacement:="AT", LookAt:= _
+'                    xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+'
+'                final_Sheet.Range(final_Sheet.Cells(account_Address_Cell_5.Row, "R"), final_Sheet.Cells(account_Address_Cell_5.Row, "R")).Replace What:="&", Replacement:="AND", LookAt:= _
+'                    xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+'
+'                final_Sheet.Range(final_Sheet.Cells(account_Address_Cell_5.Row, "R"), final_Sheet.Cells(account_Address_Cell_5.Row, "R")).Replace What:="  ", Replacement:=" ", LookAt:= _
+'                    xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+
+                final_Sheet.Range(final_Sheet.Cells(account_Address_Cell_5.Row, "U"), final_Sheet.Cells(account_Address_Cell_5.Row, "U")).Value = _
+                    "=IF(OR(RIGHT(TRIM(RC[-1]),1)="")"",RIGHT(TRIM(RC[-1]),1)=""."",RIGHT(TRIM(RC[-1]),1)="",""),LEFT(TRIM(RC[-1]),LEN(TRIM(RC[-1]))-1),TRIM(RC[-1]))"
+
+                final_Sheet.Range(final_Sheet.Cells(account_Address_Cell_5.Row, "U"), final_Sheet.Cells(account_Address_Cell_5.Row, "U")).Copy
+                final_Sheet.Range(final_Sheet.Cells(account_Address_Cell_5.Row, "T"), final_Sheet.Cells(account_Address_Cell_5.Row, "T")).PasteSpecial xlPasteValues
+                final_Sheet.Range(final_Sheet.Cells(account_Address_Cell_5.Row, "U"), final_Sheet.Cells(account_Address_Cell_5.Row, "U")).ClearContents
+            End If
+        Next account_Address_Cell_5
+        
+        For Each account_Address_Cell_5 In account_Address_5_Range.Cells 'Address 5 Text to Columns
+            If Len(account_Address_Cell_5.Value) > 70 Then
+                final_Sheet.Range(final_Sheet.Cells(account_Address_Cell_5.Row, "T"), final_Sheet.Cells(account_Address_Cell_5.Row, "T")).TextToColumns Destination:= _
+                    final_Sheet.Range(final_Sheet.Cells(account_Address_Cell_5.Row, "T"), final_Sheet.Cells(account_Address_Cell_5.Row, "T")), DataType:=xlFixedWidth, _
+                        FieldInfo:=Array(Array(0, 1), Array(70, 1)), TrailingMinusNumbers:=True
+            End If
+        Next account_Address_Cell_5
     End If
     
     'final_Row_Data = work_Sheet.Cells(Rows.Count, "Q").End(xlUp).Row 'final_Row for Address 2
@@ -971,7 +1111,7 @@ Private Sub Address()
     column_A_To_AA.Replace What:="%", Replacement:="", LookAt:= _
         xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
 
-    column_A_To_AA.Replace What:="^", Replacement:="AT", LookAt:= _
+    column_A_To_AA.Replace What:="^", Replacement:="", LookAt:= _
         xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
 
     column_A_To_AA.Replace What:="&", Replacement:="AND", LookAt:= _
@@ -1421,11 +1561,15 @@ Private Sub Account_Length() 'Check if Account Number Length is correct for User
     Set account_Num_Range = work_Sheet.Range(work_Sheet.Cells(2, 2), work_Sheet.Cells(final_Row_Data, 2))
     
     For Each account_Num_Cell In account_Num_Range.Cells
-        If Len(account_Num_Cell.Value) <> 5 And CID = "55P" Then
+        If Len(account_Num_Cell.Value) <> 5 And CID = "55P" Then '---------------------------------------------------------55P
             incorrect_Account_Length = True
             work_Sheet.Cells(account_Num_Cell.Address, "B").Interior.ColorIndex = 35
         End If
-        If Len(account_Num_Cell.Value) <> 11 And CID = "5DU" Then
+        If Len(account_Num_Cell.Value) <> 11 And CID = "5DU" Then '---------------------------------------------------------5DU
+            incorrect_Account_Length = True
+            work_Sheet.Cells(account_Num_Cell.Row, "B").Interior.ColorIndex = 35
+        End If
+        If Len(account_Num_Cell.Value) <> 16 And CID = "11Z" Then '---------------------------------------------------------11Z
             incorrect_Account_Length = True
             work_Sheet.Cells(account_Num_Cell.Row, "B").Interior.ColorIndex = 35
         End If
@@ -1446,12 +1590,12 @@ Private Sub Account_Length() 'Check if Account Number Length is correct for User
 '            work_Sheet.Cells(Counter, 2).Interior.ColorIndex = 35
 '        End If
 '    Next Counter
-'    If incorrect_Account_Length Then
-'        MsgBox ("Cells with Incorrect Account Length have been hightlighted and sorted for you")
-'        'incorrect_Account_Length = False
-'        work_Sheet.Range("B:B").AutoFilter Field:=1, Criteria1:=RGB(204, 255 _
-'        , 204), Operator:=xlFilterCellColor
-'    End If
+    If incorrect_Account_Length Then
+        MsgBox ("Cells with Incorrect Account Length have been hightlighted and sorted for you")
+        'incorrect_Account_Length = False
+        work_Sheet.Range("B:B").AutoFilter Field:=1, Criteria1:=RGB(204, 255 _
+        , 204), Operator:=xlFilterCellColor
+    End If
 End Sub
 Private Sub Create_Final_Sheet() 'Create a Calculate_Sheet and Final_Sheet if none exist
 Attribute Create_Final_Sheet.VB_ProcData.VB_Invoke_Func = " \n14"
