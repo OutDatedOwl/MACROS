@@ -1,486 +1,257 @@
 Attribute VB_Name = "Module1"
-Global work_Book
-Global work_Sheet
-Option Compare Text
-Sub Main()
-    Dim Client_ID
-    Dim Load_Type
-    Client_ID = InputBox("Enter CID")
-    Load_Type = InputBox("Enter Pre-Load Type")
+    'BO_Adder by Diego Espitia, January 2022
+    Global work_Sheet As Worksheet
+    Global work_Book As ThisWorkbook
+    Global incorrect_Account_Length As Boolean
+    Public final_Row_Data
+    Option Compare Text
+Sub Main() 'Main BO_Adder
+    Dim cell_Data As Range
+    Dim data_Range As Range
+    incorrect_Acount_Length = False
 
+    Application.DisplayAlerts = False
     Application.ScreenUpdating = False
-    Call Add_Calculation_Sheet
     
-    Select Case Load_Type
-    Case "global_add"
-        CID_Length
-        Check_CID
-        Account_Number
-        Account_Name
-        Interal_Account_Number 4
-        Check_PEID 5
-        Account_Flags
-    Case "dom_add"
-        CID_Length
-        Check_CID
-        Account_Number
-        Account_Name
-        Interal_Account_Number 5
-        Check_PEID 4
-        Account_Flags
-    End Select
+    'Call check_Columns_For_Text
+    Create_Final_Sheet
+    Check_CID
+    Account_Number
     
-    'Call Account_Length
+    If incorrect_Account_Length Then
+        Exit Sub
+    End If
     
-    Worksheets("Sheet1").Rows("1:1").Copy
-    Worksheets("Final_Sheet").Rows("1:1").PasteSpecial xlPasteColumnWidths
-    Worksheets("Final_Sheet").Rows("1:1").PasteSpecial xlPasteValues
-    Worksheets("Final_Sheet").Rows("1:1").PasteSpecial xlFormats
-    Application.ScreenUpdating = False
+    Set work_Sheet = Worksheets("Sheet1")
+    Set final_Sheet = Worksheets("Final_Sheet")
+    
+    final_Row_Data = work_Sheet.Cells(Rows.Count, "T").End(xlUp).Row
+    Set column_A_To_T = final_Sheet.Range(final_Sheet.Cells(2, "A"), final_Sheet.Cells(final_Row_Data, "T"))
+
+    column_A_To_T.Replace What:="`", Replacement:="", LookAt:= _
+        xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+
+    column_A_To_T.Replace What:="!", Replacement:="", LookAt:= _
+        xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+
+    column_A_To_T.Replace What:="@", Replacement:="AT", LookAt:= _
+        xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+
+    column_A_To_T.Replace What:="#", Replacement:="", LookAt:= _
+        xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+
+    column_A_To_T.Replace What:="$", Replacement:="", LookAt:= _
+        xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+
+    column_A_To_T.Replace What:="%", Replacement:="", LookAt:= _
+        xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+
+    column_A_To_T.Replace What:="^", Replacement:="", LookAt:= _
+        xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+
+    column_A_To_T.Replace What:="&", Replacement:="AND", LookAt:= _
+        xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+
+    column_A_To_T.Replace What:="  ", Replacement:=" ", LookAt:= _
+        xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+
+    column_A_To_T.Replace What:="Ä", Replacement:="A", LookAt:= _
+        xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+
+    column_A_To_T.Replace What:="Ê", Replacement:="E", LookAt:= _
+        xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+
+    column_A_To_T.Replace What:="Ï", Replacement:="I", LookAt:= _
+        xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+
+    column_A_To_T.Replace What:="Ö", Replacement:="O", LookAt:= _
+        xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+
+    column_A_To_T.Replace What:="Ü", Replacement:="U", LookAt:= _
+        xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+
+    column_A_To_T.Replace What:="Ÿ", Replacement:="Y", LookAt:= _
+        xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+
+    With column_A_To_T.Cells
+        .HorizontalAlignment = xlLeft
+        .VerticalAlignment = xlBottom
+        .WrapText = False
+        .Orientation = 0
+        .AddIndent = False
+        .IndentLevel = 0
+        .ShrinkToFit = False
+        .ReadingOrder = xlContext
+        .MergeCells = False
+    End With
+    
+    work_Sheet.Rows("1:1").Copy
+    final_Sheet.Rows("1:1").PasteSpecial xlPasteColumnWidths
+    final_Sheet.Rows("1:1").PasteSpecial xlPasteValues
+    final_Sheet.Rows("1:1").PasteSpecial xlFormats
+    With final_Sheet.Range(final_Sheet.Cells(2, "A"), final_Sheet.Cells(final_Row_Data, "T")).Borders
+        .LineStyle = xlContinuous
+        .Color = black
+        .Weight = xlThin
+    End With
+    Worksheets("Final_Sheet").Select
+    Application.ScreenUpdating = True
 End Sub
-Private Sub Add_Calculation_Sheet()
+Private Sub check_Columns_For_Text() 'Check if columns are empty
+    Dim work_Book As ThisWorkbook
+    Dim work_Sheet As Worksheet
+    Dim calculate_Sheet As Worksheet
+    Dim final_Sheet As Worksheet
+    Set work_Book = ThisWorkbook
+    Set work_Sheet = work_Book.Worksheets("Sheet1")
+    Set calculate_Sheet = work_Book.Worksheets("Calculate_Sheet")
+    Set final_Sheet = work_Book.Worksheets("Final_Sheet")
+    Dim dRng As Range, lRow As Long
+    Dim kRng As Range
+    Dim Col As Long
+    Dim empty_Column As Boolean
+    
+    lRow = Cells(Rows.Count, 1).End(xlUp).Row
+    Col = Cells(3, Columns.Count).End(xlToLeft).Column
+    On Error Resume Next
+        Set dRng = Range("A3:A" & lRow).SpecialCells(xlBlanks)
+        Set kRng = Range("3:AA" & Col).SpecialCells(xlBlanks)
+    On Error GoTo 0
+    For Counter = 1 To Col
+        For Counter_B = 3 To lRow
+            If work_Sheet.Cells(Counter_B, Counter).Value <> "" Then
+                empty_Column = False
+                'work_Sheet.Cells(Counter_B, Counter).Interior.ColorIndex = 5
+                'MsgBox ("Row " & Counter_B & " Column " & Counter)
+            End If
+        Next Counter_B
+        'MsgBox (Counter)
+        'MsgBox "Column " & Counter & " Empty: " & IsEmpty(Range("D3:D"))
+        If empty_Column = True Then
+            'MsgBox ("Column " & Counter & " is Empty")
+            ''MsgBox (Counter_B)
+        End If
+        empty_Column = True
+    Next Counter
+    
+    If Not dRng Is Nothing Then
+        MsgBox ("Skipping Row")
+        Exit Sub
+    End If
+    If Not kRng Is Nothing Then
+        MsgBox ("Skipping Column")
+        Exit Sub
+    End If
+End Sub
+Private Sub Account_Number()
+    Dim range_Client_ID
+    Dim work_Book As Workbook
+    Dim work_Sheet As Worksheet
+    Dim final_Sheet As Worksheet
+    Set work_Book = ThisWorkbook
+    Set work_Sheet = work_Book.Worksheets("Sheet1")
+    Set final_Sheet = work_Book.Worksheets("Final_Sheet")
+    final_Row_Data = work_Sheet.Cells(Rows.Count, "B").End(xlUp).Row
+    
+    If final_Row_Data <> 1 Then
+        work_Sheet.Range(work_Sheet.Cells(final_Row_Data, "B"), work_Sheet.Cells(2, "B")).Copy
+        final_Sheet.Range(final_Sheet.Cells(final_Row_Data, "B"), final_Sheet.Cells(2, "B")).PasteSpecial xlPasteValues
+        final_Sheet.Range(final_Sheet.Cells(final_Row_Data, "B"), final_Sheet.Cells(2, "B")).PasteSpecial xlPasteFormats
+        
+        final_Sheet.Range(final_Sheet.Cells(final_Row_Data, "B"), final_Sheet.Cells(2, "B")).Replace What:="`,!,@,#,$,%,^", Replacement:="", LookAt:= _
+            xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+            
+        final_Sheet.Range(final_Sheet.Cells(final_Row_Data, "B"), final_Sheet.Cells(2, "B")).Replace What:="@", Replacement:="AT", LookAt:= _
+            xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+            
+        final_Sheet.Range(final_Sheet.Cells(final_Row_Data, "B"), final_Sheet.Cells(2, "B")).Replace What:="&", Replacement:="AND", LookAt:= _
+            xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+            
+        final_Sheet.Range(final_Sheet.Cells(final_Row_Data, "B"), final_Sheet.Cells(2, "B")).Replace What:="  ", Replacement:=" ", LookAt:= _
+            xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+            
+        final_Sheet.Range(final_Sheet.Cells(final_Row_Data, "C"), final_Sheet.Cells(2, "C")).Value = _
+            "=IF(OR(RIGHT(TRIM(RC[-1]),1)="")"",RIGHT(TRIM(RC[-1]),1)=""."",RIGHT(TRIM(RC[-1]),1)="",""),LEFT(TRIM(RC[-1]),LEN(TRIM(RC[-1]))-1),TRIM(RC[-1]))"
+        
+        final_Sheet.Range(final_Sheet.Cells(final_Row_Data, "C"), final_Sheet.Cells(2, "C")).Copy
+        final_Sheet.Range(final_Sheet.Cells(final_Row_Data, "B"), final_Sheet.Cells(2, "B")).PasteSpecial xlPasteValues
+        final_Sheet.Range(final_Sheet.Cells(final_Row_Data, "C"), final_Sheet.Cells(2, "C")).ClearContents
+        
+        Account_Length
+    End If
+End Sub
+Private Sub Check_CID() 'Checking for CID
+    Dim work_Book As Workbook
+    Dim work_Sheet As Worksheet
+    Dim final_Sheet As Worksheet
+    Set work_Book = ThisWorkbook
+    Set work_Sheet = work_Book.Worksheets("Sheet1")
+    Set final_Sheet = work_Book.Worksheets("Final_Sheet")
+    final_Row_Data = work_Sheet.Cells(Rows.Count, 1).End(xlUp).Row
+    
+    work_Sheet.Range(work_Sheet.Cells(final_Row_Data, "A"), work_Sheet.Cells(2, "A")).Copy
+    final_Sheet.Range(final_Sheet.Cells(final_Row_Data, "A"), final_Sheet.Cells(2, "A")).PasteSpecial xlPasteValues
+    final_Sheet.Range(final_Sheet.Cells(final_Row_Data, "A"), final_Sheet.Cells(2, "A")).PasteSpecial xlPasteFormats
+        
+    final_Sheet.Range(final_Sheet.Cells(final_Row_Data, "B"), final_Sheet.Cells(2, "B")).Value = _
+        "=IF(OR(RIGHT(TRIM(RC[-1]),1)="")"",RIGHT(TRIM(RC[-1]),1)=""."",RIGHT(TRIM(RC[-1]),1)="",""),LEFT(TRIM(RC[-1]),LEN(TRIM(RC[-1]))-1),TRIM(RC[-1]))"
+    
+    final_Sheet.Range(final_Sheet.Cells(final_Row_Data, "B"), final_Sheet.Cells(2, "B")).Copy
+    final_Sheet.Range(final_Sheet.Cells(final_Row_Data, "A"), final_Sheet.Cells(2, "A")).PasteSpecial xlPasteValues
+    final_Sheet.Range(final_Sheet.Cells(final_Row_Data, "B"), final_Sheet.Cells(2, "B")).ClearContents
+    
+End Sub
+Private Sub Account_Length() 'Check if Account Number Length is correct for User_Input CID
+    Dim account_Num_Range As Range
+    Dim account_Num_Cell As Range
+    Dim work_Book As Workbook
+    Dim work_Sheet As Worksheet
+    Dim final_Sheet As Worksheet
+    Set work_Book = ThisWorkbook
+    Set work_Sheet = work_Book.Worksheets("Sheet1")
+    Set final_Sheet = work_Book.Worksheets("Final_Sheet")
+    Dim Account_Num_Length As String
+    Dim CID As String
+    CID = InputBox("Enter CID")
+    final_Row_Data = work_Sheet.Cells(work_Sheet.Rows.Count, "B").End(xlUp).Row
+    Set account_Num_Range = work_Sheet.Range(work_Sheet.Cells(2, 2), work_Sheet.Cells(final_Row_Data, 2))
+    
+    For Each account_Num_Cell In account_Num_Range.Cells
+        If Len(account_Num_Cell.Value) <> 5 And CID = "55P" Then '---------------------------------------------------------55P
+            incorrect_Account_Length = True
+            work_Sheet.Cells(account_Num_Cell.Address, "B").Interior.ColorIndex = 35
+        End If
+        If Len(account_Num_Cell.Value) <> 11 And CID = "5DU" Then '---------------------------------------------------------5DU
+            incorrect_Account_Length = True
+            work_Sheet.Cells(account_Num_Cell.Row, "B").Interior.ColorIndex = 35
+        End If
+        If Len(account_Num_Cell.Value) <> 16 And CID = "11Z" Then '---------------------------------------------------------11Z
+            incorrect_Account_Length = True
+            work_Sheet.Cells(account_Num_Cell.Row, "B").Interior.ColorIndex = 35
+        End If
+    Next account_Num_Cell
+    
+    If incorrect_Account_Length Then
+        MsgBox ("Cells with Incorrect Account Length have been hightlighted and sorted for you")
+        work_Sheet.Range("B:B").AutoFilter Field:=1, Criteria1:=RGB(204, 255 _
+        , 204), Operator:=xlFilterCellColor
+    End If
+End Sub
+Private Sub Create_Final_Sheet() 'Create a Final_Sheet if none exist
+    Dim work_Book As Workbook
     Set work_Book = ThisWorkbook
     Dim sheet_Calculate As String
     Dim sheet_Final As String
-    sheet_Calculate = "Calculate_Sheet"
     sheet_Final = "Final_Sheet"
-    Dim sheet_Calculate_Exists As Boolean
     Dim sheet_Final_Exists As Boolean
 
     For Each work_Sheet In work_Book.Worksheets
-        If work_Sheet.Name = "Calculate_Sheet" Then
-            sheet_Calculate_Exists = True
-        End If
         If work_Sheet.Name = "Final_Sheet" Then
             sheet_Final_Exists = True
         End If
     Next work_Sheet
     
-    If sheet_Calculate_Exists = False Then
-        work_Book.Worksheets.Add After:=Worksheets("Sheet1")
-        work_Book.Worksheets(Sheets.Count).Name = "Calculate_Sheet"
-        'ActiveSheet.Name = "Calculate_Sheet"
-        'Worksheets("Sheet1").Select
-    End If
-    
     If sheet_Final_Exists = False Then
-        work_Book.Worksheets.Add After:=Worksheets("Calculate_Sheet")
-        work_Book.Worksheets(Sheets.Count).Name = "Final_Sheet"
-        'ActiveSheet.Name = "Final_Sheet"
-        'Worksheets("Sheet1").Select
+        work_Book.Worksheets.Add(After:=work_Book.Worksheets("Sheet1")).Name = "Final_Sheet"
     End If
-End Sub
-Private Sub Check_CID() 'Checking for CID
-    Dim Final_Row_Client_ID
-    Dim work_Book As Workbook
-    Dim work_Sheet As Worksheet
-    Dim calculate_Sheet As Worksheet
-    Dim final_Sheet As Worksheet
-    Set work_Book = ThisWorkbook
-    Set work_Sheet = work_Book.Worksheets("Sheet1")
-    Set calculate_Sheet = work_Book.Worksheets("Calculate_Sheet")
-    Set final_Sheet = work_Book.Worksheets("Final_Sheet")
-    'MsgBox (rng.Value)
-
-    Final_Row_Client_ID = work_Sheet.Cells(Rows.Count, "A").End(xlUp).Row
-    
-    For Counter = 2 To Final_Row_Client_ID
-        calculate_Sheet.Cells(Counter, 1).Value = work_Sheet.Cells(Counter, "A").Value
-        calculate_Sheet.Cells(Counter, 2).Value = calculate_Sheet.Cells(Counter, 1).Value
-        
-        calculate_Sheet.Cells(Counter, 2).Replace What:="`", Replacement:="", LookAt:=xlPart, SearchOrder:= _
-            xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
-            
-        calculate_Sheet.Cells(Counter, 2).Replace What:="!", Replacement:="", LookAt:=xlPart, SearchOrder:= _
-            xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
-            
-        calculate_Sheet.Cells(Counter, 2).Replace What:="@", Replacement:="AT", LookAt:=xlPart, SearchOrder:= _
-            xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
-            
-        calculate_Sheet.Cells(Counter, 2).Replace What:="#", Replacement:="", LookAt:=xlPart, SearchOrder:= _
-            xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
-            
-        calculate_Sheet.Cells(Counter, 2).Replace What:="$", Replacement:="", LookAt:=xlPart, SearchOrder:= _
-            xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
-            
-        calculate_Sheet.Cells(Counter, 2).Replace What:="%", Replacement:="", LookAt:=xlPart, SearchOrder:= _
-            xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
-            
-        calculate_Sheet.Cells(Counter, 2).Replace What:="^", Replacement:="", LookAt:=xlPart, SearchOrder:= _
-            xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
-            
-        calculate_Sheet.Cells(Counter, 2).Replace What:="&", Replacement:="AND", LookAt:=xlPart, SearchOrder:= _
-            xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
-            
-        calculate_Sheet.Cells(Counter, 2).Replace What:="  ", Replacement:=" ", LookAt:=xlPart, SearchOrder:= _
-            xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
-            
-        calculate_Sheet.Cells(Counter, 3).Value = "=IF(OR(RIGHT(TRIM(RC[-1]),1)="")"",RIGHT(TRIM(RC[-1]),1)=""."",RIGHT(TRIM(RC[-1]),1)="",""),LEFT(TRIM(RC[-1]),LEN(TRIM(RC[-1]))-1),TRIM(RC[-1]))"
-                
-        calculate_Sheet.Cells(Counter, 3).Copy
-        calculate_Sheet.Cells(Counter, 4).PasteSpecial xlPasteValues
-            
-        With calculate_Sheet.Cells(Counter, 4)
-            .HorizontalAlignment = xlLeft
-            .VerticalAlignment = xlBottom
-            .WrapText = False
-            .Orientation = 0
-            .AddIndent = False
-            .IndentLevel = 0
-            .ShrinkToFit = False
-            .ReadingOrder = xlContext
-            .MergeCells = False
-        End With
-        'Final Sheet
-        final_Sheet.Cells(Counter, "A").Value = Worksheets("Calculate_Sheet").Cells(Counter, 4).Value
-    Next Counter
-End Sub
-Private Sub CID_Length()
-    Dim Final_Row_CID_Length As Long
-    Dim work_Book As Workbook
-    Dim work_Sheet As Worksheet
-    Set work_Book = ThisWorkbook
-    Set work_Sheet = work_Book.Worksheets("Sheet1")
-    'Dim Account_Num_Length As String
-    'Dim CID As String
-    Dim Incorrect_Account_Length As Boolean
-    'CID = InputBox("Enter CID")
-    Final_Row_CID_Length = work_Sheet.Cells(Rows.Count, 1).End(xlUp).Row
-    
-    For Counter = 2 To Final_Row_CID_Length
-        If Len(work_Sheet.Cells(Counter, 1).Value) <> 3 Then
-            Incorrect_CID_Length = True
-            work_Sheet.Cells(Counter, 1).Interior.ColorIndex = 35
-        End If
-        'If Len(Cells(Counter, 2).Value) <> 5 And CID = "55P" Then
-        '    Incorrect_Account_Length = True
-        '    Worksheets("Sheet1").Cells(Counter, 2).Interior.ColorIndex = 35
-        'End If
-        'If Len(Cells(Counter, 2).Value) <> 11 And CID = "5DU" Then
-        '    Incorrect_Account_Length = True
-        '    Worksheets("Sheet1").Cells(Counter, 2).Interior.ColorIndex = 35
-        'End If
-    Next Counter
-    If Incorrect_CID_Length Then
-        MsgBox ("Cells with Incorrect CID Length have been hightlighted and sorted for you")
-        Incorrect_Account_Length = False
-        work_Sheet.Range("A:A").AutoFilter Field:=1, Criteria1:=RGB(204, 255 _
-        , 204), Operator:=xlFilterCellColor
-    End If
-End Sub
-Private Sub Account_Number()
-    Dim Final_Row_Account_Number
-    Dim work_Book As Workbook
-    Dim work_Sheet As Worksheet
-    Dim calculate_Sheet As Worksheet
-    Dim final_Sheet As Worksheet
-    Set work_Book = ThisWorkbook
-    Set work_Sheet = work_Book.Worksheets("Sheet1")
-    Set calculate_Sheet = work_Book.Worksheets("Calculate_Sheet")
-    Set final_Sheet = work_Book.Worksheets("Final_Sheet")
-    Dim Incorrect_Account_Length As Boolean
-    Final_Row_Account_Number = work_Sheet.Cells(Rows.Count, "B").End(xlUp).Row
-    
-    For Counter = 2 To Final_Row_Account_Number
-        calculate_Sheet.Cells(Counter, 1).Value = work_Sheet.Cells(Counter, "B").Value
-        calculate_Sheet.Cells(Counter, 2).Value = Worksheets("Calculate_Sheet").Cells(Counter, 1).Value
-
-        If Len(work_Sheet.Cells(Counter, "B").Value) <> 6 And Client_ID <> "55P" Then
-            Incorrect_Account_Length = True
-            work_Sheet.Cells(Counter, "B").Interior.ColorIndex = 35
-        End If
-'        Worksheets("Calculate_Sheet").Cells(Counter, 2).Replace What:="`", Replacement:="", LookAt:=xlPart, SearchOrder:= _
-'            xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
-'
-'        Worksheets("Calculate_Sheet").Cells(Counter, 2).Replace What:="!", Replacement:="", LookAt:=xlPart, SearchOrder:= _
-'            xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
-'
-'        Worksheets("Calculate_Sheet").Cells(Counter, 2).Replace What:="@", Replacement:="AT", LookAt:=xlPart, SearchOrder:= _
-'            xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
-'
-'        Worksheets("Calculate_Sheet").Cells(Counter, 2).Replace What:="#", Replacement:="", LookAt:=xlPart, SearchOrder:= _
-'            xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
-'
-'        Worksheets("Calculate_Sheet").Cells(Counter, 2).Replace What:="$", Replacement:="", LookAt:=xlPart, SearchOrder:= _
-'            xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
-'
-'        Worksheets("Calculate_Sheet").Cells(Counter, 2).Replace What:="%", Replacement:="", LookAt:=xlPart, SearchOrder:= _
-'            xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
-'
-'        Worksheets("Calculate_Sheet").Cells(Counter, 2).Replace What:="^", Replacement:="", LookAt:=xlPart, SearchOrder:= _
-'            xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
-'
-'        Worksheets("Calculate_Sheet").Cells(Counter, 2).Replace What:="&", Replacement:="AND", LookAt:=xlPart, SearchOrder:= _
-'            xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
-'
-        calculate_Sheet.Cells(Counter, 2).Replace What:="  ", Replacement:=" ", LookAt:=xlPart, SearchOrder:= _
-            xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
-
-        calculate_Sheet.Cells(Counter, 3).Value = "=IF(OR(RIGHT(TRIM(RC[-1]),1)="")"",RIGHT(TRIM(RC[-1]),1)=""."",RIGHT(TRIM(RC[-1]),1)="",""),LEFT(TRIM(RC[-1]),LEN(TRIM(RC[-1]))-1),TRIM(RC[-1]))"
-
-        calculate_Sheet.Cells(Counter, 3).Copy
-        calculate_Sheet.Cells(Counter, 4).PasteSpecial xlPasteValues
-            
-        With calculate_Sheet.Cells(Counter, 4)
-            .HorizontalAlignment = xlLeft
-            .VerticalAlignment = xlBottom
-            .WrapText = False
-            .Orientation = 0
-            .AddIndent = False
-            .IndentLevel = 0
-            .ShrinkToFit = False
-            .ReadingOrder = xlContext
-            .MergeCells = False
-        End With
-        'Final Sheet
-        calculate_Sheet.Cells(Counter, 4).Copy
-        final_Sheet.Cells(Counter, "B").PasteSpecial xlPasteValues
-        final_Sheet.Cells(Counter, "B").PasteSpecial xlFormats
-        'Filter Incorrect Accounts
-        If Incorrect_Account_Length Then
-            MsgBox ("Cells with Incorrect Account Number have been hightlighted and sorted for you")
-            Incorrect_Account_Length = False
-            work_Sheet.Range("B:B").AutoFilter Field:=1, Criteria1:=RGB(204, 255 _
-            , 204), Operator:=xlFilterCellColor
-        End If
-    Next Counter
-    'Call Account_Length
-End Sub
-Private Sub Account_Name()
-    Dim Final_Row_Account_Name
-    Dim work_Book As Workbook
-    Dim work_Sheet As Worksheet
-    Dim calculate_Sheet As Worksheet
-    Dim final_Sheet As Worksheet
-    Set work_Book = ThisWorkbook
-    Set work_Sheet = work_Book.Worksheets("Sheet1")
-    Set calculate_Sheet = work_Book.Worksheets("Calculate_Sheet")
-    Set final_Sheet = work_Book.Worksheets("Final_Sheet")
-    Final_Row_Account_Name = work_Sheet.Cells(Rows.Count, "C").End(xlUp).Row
-    
-    For Counter = 2 To Final_Row_Account_Name
-        calculate_Sheet.Cells(Counter, 1).Value = work_Sheet.Cells(Counter, "C").Value
-        calculate_Sheet.Cells(Counter, 2).Value = work_Sheet.Cells(Counter, 1).Value
-
-        If Len(work_Sheet.Cells(Counter, "B").Value) <> 6 And Client_ID <> "55P" Then
-            Incorrect_Account_Length = True
-            work_Sheet.Cells(Counter, "B").Interior.ColorIndex = 35
-        End If
-'        Worksheets("Calculate_Sheet").Cells(Counter, 2).Replace What:="`", Replacement:="", LookAt:=xlPart, SearchOrder:= _
-'            xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
-'
-'        Worksheets("Calculate_Sheet").Cells(Counter, 2).Replace What:="!", Replacement:="", LookAt:=xlPart, SearchOrder:= _
-'            xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
-'
-'        Worksheets("Calculate_Sheet").Cells(Counter, 2).Replace What:="@", Replacement:="AT", LookAt:=xlPart, SearchOrder:= _
-'            xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
-'
-'        Worksheets("Calculate_Sheet").Cells(Counter, 2).Replace What:="#", Replacement:="", LookAt:=xlPart, SearchOrder:= _
-'            xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
-'
-'        Worksheets("Calculate_Sheet").Cells(Counter, 2).Replace What:="$", Replacement:="", LookAt:=xlPart, SearchOrder:= _
-'            xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
-'
-'        Worksheets("Calculate_Sheet").Cells(Counter, 2).Replace What:="%", Replacement:="", LookAt:=xlPart, SearchOrder:= _
-'            xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
-'
-'        Worksheets("Calculate_Sheet").Cells(Counter, 2).Replace What:="^", Replacement:="", LookAt:=xlPart, SearchOrder:= _
-'            xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
-'
-'        Worksheets("Calculate_Sheet").Cells(Counter, 2).Replace What:="&", Replacement:="AND", LookAt:=xlPart, SearchOrder:= _
-'            xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
-'
-'        Worksheets("Calculate_Sheet").Cells(Counter, 2).Replace What:="  ", Replacement:=" ", LookAt:=xlPart, SearchOrder:= _
-'            xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
-'
-'        Worksheets("Calculate_Sheet").Cells(Counter, 3).Value = "=IF(OR(RIGHT(TRIM(RC[-1]),1)="")"",RIGHT(TRIM(RC[-1]),1)=""."",RIGHT(TRIM(RC[-1]),1)="",""),LEFT(TRIM(RC[-1]),LEN(TRIM(RC[-1]))-1),TRIM(RC[-1]))"
-'
-        calculate_Sheet.Cells(Counter, 3).Value = "=LEFT(RC[-2], 50)"
-        calculate_Sheet.Cells(Counter, 3).Copy
-        calculate_Sheet.Cells(Counter, 4).PasteSpecial xlPasteValues
-            
-        With calculate_Sheet.Cells(Counter, 4)
-            .HorizontalAlignment = xlLeft
-            .VerticalAlignment = xlBottom
-            .WrapText = False
-            .Orientation = 0
-            .AddIndent = False
-            .IndentLevel = 0
-            .ShrinkToFit = False
-            .ReadingOrder = xlContext
-            .MergeCells = False
-        End With
-        'Final Sheet
-        calculate_Sheet.Cells(Counter, 4).Copy
-        final_Sheet.Cells(Counter, "C").PasteSpecial xlPasteValues
-        final_Sheet.Cells(Counter, "C").PasteSpecial xlFormats
-    Next Counter
-    'Call Account_Length
-End Sub
-Private Sub Interal_Account_Number(column_Num As Long)
-    Dim Final_Row_Internal_Account_Number
-    Dim work_Book As Workbook
-    Dim work_Sheet As Worksheet
-    Dim calculate_Sheet As Worksheet
-    Dim final_Sheet As Worksheet
-    Set work_Book = ThisWorkbook
-    Set work_Sheet = work_Book.Worksheets("Sheet1")
-    Set calculate_Sheet = work_Book.Worksheets("Calculate_Sheet")
-    Set final_Sheet = work_Book.Worksheets("Final_Sheet")
-    Final_Row_Internal_Account_Number = work_Sheet.Cells(Rows.Count, column_Num).End(xlUp).Row
-    
-    For Counter = 2 To Final_Row_Internal_Account_Number
-        calculate_Sheet.Cells(Counter, 1).Value = work_Sheet.Cells(Counter, column_Num).Value
-        calculate_Sheet.Cells(Counter, 2).Value = Worksheets("Calculate_Sheet").Cells(Counter, 1).Value
-
-'        Worksheets("Calculate_Sheet").Cells(Counter, 2).Replace What:="`", Replacement:="", LookAt:=xlPart, SearchOrder:= _
-'            xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
-'
-'        Worksheets("Calculate_Sheet").Cells(Counter, 2).Replace What:="!", Replacement:="", LookAt:=xlPart, SearchOrder:= _
-'            xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
-'
-'        Worksheets("Calculate_Sheet").Cells(Counter, 2).Replace What:="@", Replacement:="AT", LookAt:=xlPart, SearchOrder:= _
-'            xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
-'
-'        Worksheets("Calculate_Sheet").Cells(Counter, 2).Replace What:="#", Replacement:="", LookAt:=xlPart, SearchOrder:= _
-'            xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
-'
-'        Worksheets("Calculate_Sheet").Cells(Counter, 2).Replace What:="$", Replacement:="", LookAt:=xlPart, SearchOrder:= _
-'            xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
-'
-'        Worksheets("Calculate_Sheet").Cells(Counter, 2).Replace What:="%", Replacement:="", LookAt:=xlPart, SearchOrder:= _
-'            xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
-'
-'        Worksheets("Calculate_Sheet").Cells(Counter, 2).Replace What:="^", Replacement:="", LookAt:=xlPart, SearchOrder:= _
-'            xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
-'
-'        Worksheets("Calculate_Sheet").Cells(Counter, 2).Replace What:="&", Replacement:="AND", LookAt:=xlPart, SearchOrder:= _
-'            xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
-'
-        calculate_Sheet.Cells(Counter, 2).Replace What:="  ", Replacement:=" ", LookAt:=xlPart, SearchOrder:= _
-            xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
-
-        calculate_Sheet.Cells(Counter, 3).Value = "=IF(OR(RIGHT(TRIM(RC[-1]),1)="")"",RIGHT(TRIM(RC[-1]),1)=""."",RIGHT(TRIM(RC[-1]),1)="",""),LEFT(TRIM(RC[-1]),LEN(TRIM(RC[-1]))-1),TRIM(RC[-1]))"
-
-        calculate_Sheet.Cells(Counter, 3).Copy
-        calculate_Sheet.Cells(Counter, 4).PasteSpecial xlPasteValues
-            
-        With calculate_Sheet.Cells(Counter, 4)
-            .HorizontalAlignment = xlLeft
-            .VerticalAlignment = xlBottom
-            .WrapText = False
-            .Orientation = 0
-            .AddIndent = False
-            .IndentLevel = 0
-            .ShrinkToFit = False
-            .ReadingOrder = xlContext
-            .MergeCells = False
-        End With
-        'Final Sheet
-        calculate_Sheet.Cells(Counter, 4).Copy
-        final_Sheet.Cells(Counter, column_Num).PasteSpecial xlPasteValues
-        final_Sheet.Cells(Counter, column_Num).PasteSpecial xlFormats
-        'Filter Incorrect Accounts
-'        If Incorrect_Account_Length Then
-'            MsgBox ("Cells with Incorrect Account Length have been hightlighted and sorted for you")
-'            Incorrect_Account_Length = False
-'            work_Sheet.Range("D:D").AutoFilter Field:=1, Criteria1:=RGB(204, 255 _
-'            , 204), Operator:=xlFilterCellColor
-'        End If
-    Next Counter
-    'Call Account_Length
-End Sub
-Private Sub Check_PEID(column_Num As Long)
-    Dim Final_Row_PEID
-    Dim work_Book As Workbook
-    Dim work_Sheet As Worksheet
-    Dim calculate_Sheet As Worksheet
-    Dim final_Sheet As Worksheet
-    Set work_Book = ThisWorkbook
-    Set work_Sheet = work_Book.Worksheets("Sheet1")
-    Set calculate_Sheet = work_Book.Worksheets("Calculate_Sheet")
-    Set final_Sheet = work_Book.Worksheets("Final_Sheet")
-    Dim Incorrect_Account_Length As Boolean
-    Final_Row_PEID = work_Sheet.Cells(Rows.Count, column_Num).End(xlUp).Row
-    
-    For Counter = 2 To Final_Row_PEID
-        calculate_Sheet.Cells(Counter, 1).Value = work_Sheet.Cells(Counter, column_Num).Value
-        calculate_Sheet.Cells(Counter, 2).Value = Worksheets("Calculate_Sheet").Cells(Counter, 1).Value
-
-        If Len(work_Sheet.Cells(Counter, column_Num).Value) <> 3 Then
-            Incorrect_Account_Length = True
-            work_Sheet.Cells(Counter, column_Num).Interior.ColorIndex = 35
-        End If
-'        Worksheets("Calculate_Sheet").Cells(Counter, 2).Replace What:="`", Replacement:="", LookAt:=xlPart, SearchOrder:= _
-'            xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
-'
-'        Worksheets("Calculate_Sheet").Cells(Counter, 2).Replace What:="!", Replacement:="", LookAt:=xlPart, SearchOrder:= _
-'            xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
-'
-'        Worksheets("Calculate_Sheet").Cells(Counter, 2).Replace What:="@", Replacement:="AT", LookAt:=xlPart, SearchOrder:= _
-'            xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
-'
-'        Worksheets("Calculate_Sheet").Cells(Counter, 2).Replace What:="#", Replacement:="", LookAt:=xlPart, SearchOrder:= _
-'            xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
-'
-'        Worksheets("Calculate_Sheet").Cells(Counter, 2).Replace What:="$", Replacement:="", LookAt:=xlPart, SearchOrder:= _
-'            xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
-'
-'        Worksheets("Calculate_Sheet").Cells(Counter, 2).Replace What:="%", Replacement:="", LookAt:=xlPart, SearchOrder:= _
-'            xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
-'
-'        Worksheets("Calculate_Sheet").Cells(Counter, 2).Replace What:="^", Replacement:="", LookAt:=xlPart, SearchOrder:= _
-'            xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
-'
-'        Worksheets("Calculate_Sheet").Cells(Counter, 2).Replace What:="&", Replacement:="AND", LookAt:=xlPart, SearchOrder:= _
-'            xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
-'
-        calculate_Sheet.Cells(Counter, 2).Replace What:="  ", Replacement:=" ", LookAt:=xlPart, SearchOrder:= _
-            xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
-
-        calculate_Sheet.Cells(Counter, 3).Value = "=IF(OR(RIGHT(TRIM(RC[-1]),1)="")"",RIGHT(TRIM(RC[-1]),1)=""."",RIGHT(TRIM(RC[-1]),1)="",""),LEFT(TRIM(RC[-1]),LEN(TRIM(RC[-1]))-1),TRIM(RC[-1]))"
-
-        calculate_Sheet.Cells(Counter, 3).Copy
-        calculate_Sheet.Cells(Counter, 4).PasteSpecial xlPasteValues
-            
-        With calculate_Sheet.Cells(Counter, 4)
-            .HorizontalAlignment = xlLeft
-            .VerticalAlignment = xlBottom
-            .WrapText = False
-            .Orientation = 0
-            .AddIndent = False
-            .IndentLevel = 0
-            .ShrinkToFit = False
-            .ReadingOrder = xlContext
-            .MergeCells = False
-        End With
-        'Final Sheet
-        calculate_Sheet.Cells(Counter, 4).Copy
-        final_Sheet.Cells(Counter, column_Num).PasteSpecial xlPasteValues
-        final_Sheet.Cells(Counter, column_Num).PasteSpecial xlFormats
-        'Filter Incorrect Accounts
-        If Incorrect_Account_Length Then
-            MsgBox ("Cells with Incorrect PEID have been hightlighted and sorted for you")
-            Incorrect_Account_Length = False
-            work_Sheet.Range("E:E").AutoFilter Field:=1, Criteria1:=RGB(204, 255 _
-            , 204), Operator:=xlFilterCellColor
-        End If
-    Next Counter
-    'Call Account_Length
-End Sub
-Private Sub Account_Flags()
-    Dim Final_Row_Account_Flags
-    Dim work_Book As Workbook
-    Dim work_Sheet As Worksheet
-    Dim final_Sheet As Worksheet
-    Set work_Book = ThisWorkbook
-    Set work_Sheet = work_Book.Worksheets("Sheet1")
-    Set final_Sheet = work_Book.Worksheets("Final_Sheet")
-    Final_Row_Account_Flags = work_Sheet.Cells(Rows.Count, 1).End(xlUp).Row
-    
-    final_Sheet.Select
-    final_Sheet.Range(Cells(Final_Row_Account_Flags, "P"), Cells(2, "P")).Value = "Y"
-    final_Sheet.Range(Cells(Final_Row_Account_Flags, "Q"), Cells(2, "Q")).Value = "S"
-    final_Sheet.Range(Cells(Final_Row_Account_Flags, "S"), Cells(2, "S")).Value = "B"
-    work_Sheet.Select
 End Sub
