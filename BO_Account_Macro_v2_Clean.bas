@@ -42,6 +42,66 @@ Attribute Main.VB_ProcData.VB_Invoke_Func = " \n14"
     Set work_Sheet = Worksheets("Sheet1")
     Set final_Sheet = Worksheets("Final_Sheet")
     
+    final_Row_Data = work_Sheet.Cells(Rows.Count, "AA").End(xlUp).Row
+    Set column_A_To_AA = final_Sheet.Range(final_Sheet.Cells(2, "A"), final_Sheet.Cells(final_Row_Data, "AA"))
+
+    column_A_To_AA.Replace What:="`", Replacement:="", LookAt:= _
+        xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+
+    column_A_To_AA.Replace What:="!", Replacement:="", LookAt:= _
+        xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+
+    column_A_To_AA.Replace What:="@", Replacement:="AT", LookAt:= _
+        xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+
+    column_A_To_AA.Replace What:="#", Replacement:="", LookAt:= _
+        xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+
+    column_A_To_AA.Replace What:="$", Replacement:="", LookAt:= _
+        xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+
+    column_A_To_AA.Replace What:="%", Replacement:="", LookAt:= _
+        xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+
+    column_A_To_AA.Replace What:="^", Replacement:="", LookAt:= _
+        xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+
+    column_A_To_AA.Replace What:="&", Replacement:="AND", LookAt:= _
+        xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+
+    column_A_To_AA.Replace What:="  ", Replacement:=" ", LookAt:= _
+        xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+
+    column_A_To_AA.Replace What:="Ä", Replacement:="A", LookAt:= _
+        xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+
+    column_A_To_AA.Replace What:="Ê", Replacement:="E", LookAt:= _
+        xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+
+    column_A_To_AA.Replace What:="Ï", Replacement:="I", LookAt:= _
+        xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+
+    column_A_To_AA.Replace What:="Ö", Replacement:="O", LookAt:= _
+        xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+
+    column_A_To_AA.Replace What:="Ü", Replacement:="U", LookAt:= _
+        xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+
+    column_A_To_AA.Replace What:="Ÿ", Replacement:="Y", LookAt:= _
+        xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+
+    With column_A_To_AA.Cells
+        .HorizontalAlignment = xlLeft
+        .VerticalAlignment = xlBottom
+        .WrapText = False
+        .Orientation = 0
+        .AddIndent = False
+        .IndentLevel = 0
+        .ShrinkToFit = False
+        .ReadingOrder = xlContext
+        .MergeCells = False
+    End With
+    
     work_Sheet.Rows("1:1").Copy
     final_Sheet.Rows("1:1").PasteSpecial xlPasteColumnWidths
     final_Sheet.Rows("1:1").PasteSpecial xlPasteValues
@@ -215,7 +275,7 @@ Private Sub Check_CID() 'Checking for CID
     Set final_Sheet = work_Book.Worksheets("Final_Sheet")
     final_Row_Data = work_Sheet.Cells(Rows.Count, 1).End(xlUp).Row
     
-    work_Sheet.Range(work_Sheet.Cells(final_Row_Data, "A"), work_Sheet.Cells(3, "A")).Copy
+    work_Sheet.Range(work_Sheet.Cells(final_Row_Data, "A"), work_Sheet.Cells(2, "A")).Copy
     final_Sheet.Range(final_Sheet.Cells(final_Row_Data, "A"), final_Sheet.Cells(2, "A")).PasteSpecial xlPasteValues
     final_Sheet.Range(final_Sheet.Cells(final_Row_Data, "A"), final_Sheet.Cells(2, "A")).PasteSpecial xlPasteFormats
         
@@ -529,65 +589,65 @@ Private Sub Address()
     End If
     
     End If
-    final_Row_Data = work_Sheet.Cells(Rows.Count, "AA").End(xlUp).Row
-    Set column_A_To_AA = final_Sheet.Range(final_Sheet.Cells(2, "A"), final_Sheet.Cells(final_Row_Data, "AA"))
-    
-    column_A_To_AA.Replace What:="`", Replacement:="", LookAt:= _
-        xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
-
-    column_A_To_AA.Replace What:="!", Replacement:="", LookAt:= _
-        xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
-        
-    column_A_To_AA.Replace What:="@", Replacement:="AT", LookAt:= _
-        xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
-        
-    column_A_To_AA.Replace What:="#", Replacement:="", LookAt:= _
-        xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
-        
-    column_A_To_AA.Replace What:="$", Replacement:="", LookAt:= _
-        xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
-        
-    column_A_To_AA.Replace What:="%", Replacement:="", LookAt:= _
-        xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
-
-    column_A_To_AA.Replace What:="^", Replacement:="", LookAt:= _
-        xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
-
-    column_A_To_AA.Replace What:="&", Replacement:="AND", LookAt:= _
-        xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
-
-    column_A_To_AA.Replace What:="  ", Replacement:=" ", LookAt:= _
-        xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
-        
-    column_A_To_AA.Replace What:="Ä", Replacement:="A", LookAt:= _
-        xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
-        
-    column_A_To_AA.Replace What:="Ê", Replacement:="E", LookAt:= _
-        xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
-        
-    column_A_To_AA.Replace What:="Ï", Replacement:="I", LookAt:= _
-        xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
-        
-    column_A_To_AA.Replace What:="Ö", Replacement:="O", LookAt:= _
-        xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
-        
-    column_A_To_AA.Replace What:="Ü", Replacement:="U", LookAt:= _
-        xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
-        
-    column_A_To_AA.Replace What:="Ÿ", Replacement:="Y", LookAt:= _
-        xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
-        
-    With column_A_To_AA.Cells
-        .HorizontalAlignment = xlLeft
-        .VerticalAlignment = xlBottom
-        .WrapText = False
-        .Orientation = 0
-        .AddIndent = False
-        .IndentLevel = 0
-        .ShrinkToFit = False
-        .ReadingOrder = xlContext
-        .MergeCells = False
-    End With
+'    final_Row_Data = work_Sheet.Cells(Rows.Count, "AA").End(xlUp).Row
+'    Set column_A_To_AA = final_Sheet.Range(final_Sheet.Cells(2, "A"), final_Sheet.Cells(final_Row_Data, "AA"))
+'
+'    column_A_To_AA.Replace What:="`", Replacement:="", LookAt:= _
+'        xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+'
+'    column_A_To_AA.Replace What:="!", Replacement:="", LookAt:= _
+'        xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+'
+'    column_A_To_AA.Replace What:="@", Replacement:="AT", LookAt:= _
+'        xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+'
+'    column_A_To_AA.Replace What:="#", Replacement:="", LookAt:= _
+'        xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+'
+'    column_A_To_AA.Replace What:="$", Replacement:="", LookAt:= _
+'        xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+'
+'    column_A_To_AA.Replace What:="%", Replacement:="", LookAt:= _
+'        xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+'
+'    column_A_To_AA.Replace What:="^", Replacement:="", LookAt:= _
+'        xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+'
+'    column_A_To_AA.Replace What:="&", Replacement:="AND", LookAt:= _
+'        xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+'
+'    column_A_To_AA.Replace What:="  ", Replacement:=" ", LookAt:= _
+'        xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+'
+'    column_A_To_AA.Replace What:="Ä", Replacement:="A", LookAt:= _
+'        xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+'
+'    column_A_To_AA.Replace What:="Ê", Replacement:="E", LookAt:= _
+'        xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+'
+'    column_A_To_AA.Replace What:="Ï", Replacement:="I", LookAt:= _
+'        xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+'
+'    column_A_To_AA.Replace What:="Ö", Replacement:="O", LookAt:= _
+'        xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+'
+'    column_A_To_AA.Replace What:="Ü", Replacement:="U", LookAt:= _
+'        xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+'
+'    column_A_To_AA.Replace What:="Ÿ", Replacement:="Y", LookAt:= _
+'        xlPart, SearchOrder:=xlByRows, MatchCase:=False, SearchFormat:=False, ReplaceFormat:=False
+'
+'    With column_A_To_AA.Cells
+'        .HorizontalAlignment = xlLeft
+'        .VerticalAlignment = xlBottom
+'        .WrapText = False
+'        .Orientation = 0
+'        .AddIndent = False
+'        .IndentLevel = 0
+'        .ShrinkToFit = False
+'        .ReadingOrder = xlContext
+'        .MergeCells = False
+'    End With
 End Sub
 Private Sub Street_Name()
     Dim work_Book As Workbook
@@ -598,7 +658,7 @@ Private Sub Street_Name()
     Set final_Sheet = work_Book.Worksheets("Final_Sheet")
     final_Row_Data = Cells(Rows.Count, "U").End(xlUp).Row
     
-    If final_Row_Data <> 1 Then
+    If final_Row_Data <> 1 Then 'CHANGE WHEN THIS IS CALLED---------------------------------------------------------------------------------------
         work_Sheet.Range(work_Sheet.Cells(final_Row_Data, "U"), work_Sheet.Cells(2, "U")).Copy
         final_Sheet.Range(final_Sheet.Cells(final_Row_Data, "U"), final_Sheet.Cells(2, "U")).PasteSpecial xlPasteValues
         final_Sheet.Range(final_Sheet.Cells(final_Row_Data, "U"), final_Sheet.Cells(2, "U")).PasteSpecial xlPasteFormats
@@ -801,6 +861,6 @@ Attribute Create_Final_Sheet.VB_ProcData.VB_Invoke_Func = " \n14"
     Next work_Sheet
     
     If sheet_Final_Exists = False Then
-        work_Book.Worksheets.Add After:=Worksheets("Sheet1").Name = "Final_Sheet"
+        work_Book.Worksheets.Add(After:=work_Book.Worksheets("Sheet1")).Name = "Final_Sheet"
     End If
 End Sub
